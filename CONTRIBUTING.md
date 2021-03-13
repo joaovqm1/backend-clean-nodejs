@@ -1,5 +1,5 @@
 ## Must know
-Before any step futher, read this guidelines: https://github.com/github/docs/blob/main/CONTRIBUTING.md
+Before any step futher, read these guidelines: https://github.com/github/docs/blob/main/CONTRIBUTING.md
 
 
 ### Tools
