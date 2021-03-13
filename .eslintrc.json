@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "standard-with-typescript",
+    "prettier"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/comma-spacing": "off",
+    "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-extraneous-class": "off",
+    "@typescript-eslint/space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "max-lines-per-function": [
+      "error",
+      50
+    ],
+    "max-params": [
+      "error",
+      3
+    ],
+    "max-lines": "error",
+    "max-depth": [
+      "error",
+      3
+    ]
+  }
+}

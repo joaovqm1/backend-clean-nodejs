@@ -1,0 +1,9 @@
+node_modules
+dist
+.vscode
+.env
+yarn-error.log
+localhost
+.gitignore
+src/test/database.sqlite
+coverage/*

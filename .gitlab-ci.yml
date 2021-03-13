@@ -1,0 +1,51 @@
+image: node:12.13-alpine
+
+stages:
+  - build
+  - quality
+  - security
+  - tests
+
+cache:
+  paths:
+    - node_modules/
+    - yarn.lock
+
+build:
+  stage: build
+  tags:
+    - docker
+  script:
+    - yarn install
+    - yarn build
+  only:
+    - develop
+    - master
+
+quality:
+  stage: quality
+  script:
+    - yarn lint
+    - yarn verify-dependencies-rules
+  only:
+    - develop
+    - master
+
+security:
+  stage: security
+  script:
+    - yarn audit-dependencies
+  only:
+    - develop
+    - master
+
+tests:
+  stage: tests
+  tags:
+    - docker
+  script:
+    - yarn test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  only:
+    - develop
+    - master

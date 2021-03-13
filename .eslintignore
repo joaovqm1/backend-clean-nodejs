@@ -1,0 +1,8 @@
+node_modules
+dist
+.vscode
+yarn-error.log
+src/infra/database/migrations
+src/infra/database/seeders
+src/config/env.ts
+src/test/
