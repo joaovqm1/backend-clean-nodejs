@@ -59,7 +59,7 @@ To test, just use any of the following commands:
 - _yarn integration-test_ (will run all integration tests)
 - _yarn one-integration-test <path>_ (will run only one integration test)
 
-# Contributing 
+## Contributing 
 
 This project is just a basic init for any project using NodeJs. It still need some improvements such as:
 
