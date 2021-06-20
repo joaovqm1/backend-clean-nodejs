@@ -1,17 +1,17 @@
 import { UserIdentification } from '@/data/contracts'
-import { fromAnyReadRequestToReadRequestDTO } from '@/data/request-to-fields'
+import { FilterBuilder } from '@/data/filter-builder'
 import {
-  ReadCrudUseCase,
-  OfficeEntity,
-  ReadOfficeUseCase,
-  ReadCrudRequestDTO,
-  ReadOfficeResponseDTO,
-  UnauthorizedOfficeAcesssError,
+  Filter,
   GetManyResult,
-  UnauthorizedOfficesAcesssError,
-  officeFieldsToInclude
+  MissingIdError,
+  OfficeEntity,
+  officeFieldsToInclude,
+  ReadCrudUseCase,
+  ReadOfficeResponseDTO,
+  ReadOfficeUseCase,
+  UnauthorizedOfficeAcesssError,
+  UnauthorizedOfficesAcesssError
 } from '@/domain'
-import { MissingIdError } from '@/domain/features/office/read/errors/id-not-informed'
 
 interface Params {
   readCrudUseCase: ReadCrudUseCase<OfficeEntity>
@@ -32,13 +32,12 @@ export class ReadOfficeUseCaseImpl implements ReadOfficeUseCase {
   }
 
   async getById(id: number): Promise<OfficeEntity> {
-    const request = this.getRequestByIdWithIncludes(id)
-    return this.readCrudUseCase.getOne(request)
-  }
+    const filters: Filter[] = new FilterBuilder()
+      .equalTo('id', id)
+      .include(officeFieldsToInclude)
+      .build()
 
-  getRequestByIdWithIncludes(id: number): ReadCrudRequestDTO {
-    const request: any = { id }
-    return fromAnyReadRequestToReadRequestDTO({ request, fieldsToInclude: officeFieldsToInclude })
+    return this.readCrudUseCase.getOne(filters)
   }
 
   async fetchAfterCreation(id: number): Promise<ReadOfficeResponseDTO> {
@@ -49,9 +48,8 @@ export class ReadOfficeUseCaseImpl implements ReadOfficeUseCase {
     return this.getById(id)
   }
 
-  async getOne(query: ReadCrudRequestDTO): Promise<ReadOfficeResponseDTO> {
-    const filter = query.filters[0]
-    const id = filter.equalTo?.id
+  async getOne(filters: Filter[]): Promise<ReadOfficeResponseDTO> {
+    const id = filters.find(filter => filter.name === 'equalTo' && filter.field === 'id')?.value
 
     if (id === undefined) {
       throw new MissingIdError()
@@ -61,14 +59,20 @@ export class ReadOfficeUseCaseImpl implements ReadOfficeUseCase {
       throw new UnauthorizedOfficeAcesssError()
     }
 
-    if (query.fieldsToInclude === undefined) {
-      query.fieldsToInclude = officeFieldsToInclude
+    const include = filters.find(filter => filter.name === 'include')
+    if (include === undefined) {
+      const includeFilter = new FilterBuilder()
+        .include(officeFieldsToInclude)
+        .build()
+
+      return this.readCrudUseCase.getOne(filters.concat(includeFilter))
+    } else {
+      return this.readCrudUseCase.getOne(filters)
     }
 
-    return this.readCrudUseCase.getOne(query)
   }
 
-  async getMany(query: ReadCrudRequestDTO): Promise<GetManyResult> {
+  async getMany(filters: Filter[]): Promise<GetManyResult> {
     throw new UnauthorizedOfficesAcesssError()
   }
 }

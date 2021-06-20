@@ -6,7 +6,7 @@ export interface UserModel extends Omit<UserEntity, 'id' | 'role'> {
     id: number
     name?: string
   }
-  officeId: number
-  roleId: number
+  officeId?: number
+  roleId?: number
   passwordHash?: string
 }

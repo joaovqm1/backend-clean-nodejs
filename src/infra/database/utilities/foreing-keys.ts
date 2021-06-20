@@ -67,7 +67,14 @@ export const getOfficeForeignKeyOptions = (
 
 export const officeIdSchema = {
   type: INTEGER,
+  allowNull: false
+}
+
+export const idSchema = {
+  type: INTEGER,
   allowNull: false,
+  autoIncrement: true,
+  primaryKey: true
 }
 
 export const defaultFieldsSchema = {

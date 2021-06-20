@@ -1,21 +1,29 @@
-import { Model, INTEGER, STRING } from 'sequelize'
+import { INTEGER, Model, STRING } from 'sequelize'
+
 import { sequelize } from '@/infra/database/sequelize'
-import { getForeignKeyOptions } from '@/infra/database/utilities'
-import Plan from './plan'
-import City from './city'
-import State from './state'
-import User from './user'
+import { getForeignKeyOptions, idSchema } from '@/infra/database/utilities'
+
+import { City } from './city'
+import { CustomerSupplier } from './customersupplier'
+import { Document } from './document'
+import { Finance } from './finance'
+import { FinanceMethod } from './financemethod'
+import { FinanceType } from './financetype'
+import { Phases } from './phases'
+import { Plan } from './plan'
+import { Project } from './project'
+import { ProjectStatus } from './projectstatus'
+import { ProjectType } from './projecttype'
+import { Scope } from './scope'
+import { State } from './state'
+import { Task } from './task'
+import { User } from './user'
 
 class OfficeSequelizeModel extends Model { }
 
 OfficeSequelizeModel.init(
   {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
+    id: idSchema,
     email: {
       type: STRING,
       allowNull: false,
@@ -94,6 +102,19 @@ OfficeSequelizeModel.belongsTo(City, getForeignKeyOptions())
 
 OfficeSequelizeModel.hasMany(User, getForeignKeyOptions('CASCADE'))
 User.belongsTo(OfficeSequelizeModel, getForeignKeyOptions())
+
+OfficeSequelizeModel.hasMany(Document, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(CustomerSupplier, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(Finance, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(FinanceMethod, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(FinanceType, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(Phases, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(Scope, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(ProjectStatus, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(ProjectType, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(Task, getForeignKeyOptions('CASCADE'))
+OfficeSequelizeModel.hasMany(Project, getForeignKeyOptions('CASCADE'))
+
 
 export const Office = OfficeSequelizeModel
 export default OfficeSequelizeModel

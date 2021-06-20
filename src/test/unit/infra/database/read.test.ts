@@ -1,22 +1,22 @@
 import {
   ReadApiImpl
 } from '@/infra'
-import { Filter } from '@/data/contracts'
 
 import User from '@/infra/database/models/user'
 
 import sinon from 'sinon'
-import { QueryCreater } from '@/infra/database/api/read/query'
+import { QueryCreaterImpl } from '@/infra/database/api/read/query'
+import { Filter } from '@/domain'
 
 describe('Infra  - Database Read Api', () => {
-  const queryCreater = new QueryCreater({
+  const queryCreater = new QueryCreaterImpl({
     modelName: undefined,
     sequelizeModel: undefined,
     sequelizeSchema: undefined,
     modelFactory: undefined,
     stringUtilities: undefined,
     currentUser: undefined,
-    userId: undefined,
+    officeId: undefined,
     isHybridTable: undefined,
     isPublicTable: undefined,
     officeIdFieldToQuery: undefined

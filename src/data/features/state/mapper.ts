@@ -1,5 +1,6 @@
-import { ReadStateResponseDTO } from '@/domain'
 import { BaseModelMapper } from '@/data/mapper'
+import { ReadStateResponseDTO } from '@/domain'
+
 import { StateModel } from './model'
 
 export class StateModelMapper implements BaseModelMapper {

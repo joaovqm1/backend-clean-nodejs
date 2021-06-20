@@ -5,6 +5,7 @@ import {
 } from '@/presentation'
 import { ReadCrudRequestDTO, ReadStateResponseDTO } from '@/domain'
 import { mockStateEntity } from '@/test/utilities/mocks'
+import { mockFiltersWithId } from '../mocks'
 
 describe('State View Model Mapper', function() {
   const viewModelMapper = new StateViewModelMapper()
@@ -17,15 +18,7 @@ describe('State View Model Mapper', function() {
         id: 1
       }
 
-      const requestDTO: ReadCrudRequestDTO = {
-        filters: [{
-          equalTo: {
-            id: requestViewModel.id
-          }
-        }]
-      }
-
-      expect(viewModelMapper.fromReadRequestViewModelToReadRequestDTO(requestViewModel)).toEqual(requestDTO)
+      expect(viewModelMapper.fromReadRequestViewModelToFilters(requestViewModel)).toEqual(mockFiltersWithId)
     })
 
     it('Should transform read one response dto to read one response view mdoel', async function() {

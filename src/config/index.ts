@@ -1,3 +1,5 @@
 export * from './database'
 export * from './enviroment'
+export * from './mail'
 export * from './server'
+export * from './storage'

@@ -1,0 +1,1 @@
+export const documentUploadTreshold = 5e+8

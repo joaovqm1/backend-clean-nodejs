@@ -1,13 +1,18 @@
 {
   "extends": [
     "standard-with-typescript",
-    "prettier"
+    "prettier",
+    "plugin:security/recommended",
+    "plugin:sonarjs/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "plugins": [
-    "prettier"
+    "prettier",
+    "security",
+    "simple-import-sort",
+    "sonarjs"
   ],
   "rules": {
     "@typescript-eslint/strict-boolean-expressions": "off",
@@ -33,6 +38,21 @@
     "max-depth": [
       "error",
       3
-    ]
-  }
+    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.test.ts"
+      ],
+      "rules": {
+        "max-lines-per-function": [
+          "error",
+          500
+        ]
+      }
+    }
+  ]
 }

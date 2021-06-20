@@ -1,3 +1,4 @@
+import { Filter } from '@/domain'
 import {
   UpdateCrudRepositoryImpl,
   UpdateApiImpl,
@@ -6,7 +7,6 @@ import {
 } from '@/infra'
 import User from '@/infra/database/models/user'
 
-import { Filter } from '@/data/contracts'
 import sinon from 'sinon'
 describe('Infra - Update Crud Repository', () => {
   const errorHandler: ErrorHandlerImpl = new ErrorHandlerImpl('Error message')

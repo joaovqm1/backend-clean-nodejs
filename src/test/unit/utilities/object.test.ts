@@ -17,7 +17,7 @@ describe('Utilities - Object Manager', function() {
   })
 
   it('Should reject object', function() {
-    const date = new Date(1993,5,9).toISOString().split('T')[0]
+    const date = new Date(1993, 5, 9).toISOString().split('T')[0]
 
     expect(objectManager.isObject(date)).toEqual(false)
   })
@@ -51,7 +51,7 @@ describe('Utilities - Object Manager', function() {
   })
 
   it('Should certify date', function() {
-    const date = new Date(1993,5,9).toISOString().split('T')[0]
+    const date = new Date(1993, 5, 9).toISOString().split('T')[0]
 
     expect(objectManager.isDate(date)).toEqual(true)
   })
@@ -64,27 +64,9 @@ describe('Utilities - Object Manager', function() {
     expect(objectManager.isDate('string')).toEqual(false)
   })
 
-  it('Should create a random string', function() {
-    sinon.stub(Math, 'random').withArgs().returns(0)
-
-    expect(objectManager.getRandomString(5, 'abed0')).toEqual('aaaaa')
-  })
-
   it('Should clone object', function() {
     sinon.stub(lodash, 'cloneDeep').withArgs({ nome: 'Vitas' }).returns({ nome: 'Vitas' })
 
     expect(objectManager.cloneObject({ nome: 'Vitas' })).toEqual({ nome: 'Vitas' })
-  })
-
-  it('Should confirm string similarity', function() {
-    sinon.stub(stringSimilarity, 'compareTwoStrings').withArgs('ronaldo', 'Ronaldo').returns(0.83)
-
-    expect(objectManager.stringsAreSimilar('ronaldo', 'Ronaldo', 0.8)).toEqual(true)
-  })
-
-  it('Should deny string similarity', function() {
-    sinon.stub(stringSimilarity, 'compareTwoStrings').withArgs('porta', 'hipopotamo').returns(0.4)
-
-    expect(objectManager.stringsAreSimilar('porta', 'hipopotamo', 0.8)).toEqual(false)
   })
 })

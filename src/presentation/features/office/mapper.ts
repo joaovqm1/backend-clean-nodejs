@@ -1,13 +1,15 @@
-import { BaseCrudViewModelMapper } from '@/presentation/base-crud-view-model-mapper'
+import { StringUtilities } from '@/data'
 import {
   CreateOfficeRequestDTO,
   CreateOfficeResponseDTO,
+  Filter,
+  officeFieldsToInclude,
   ReadOfficeResponseDTO,
-  ReadCrudRequestDTO,
 } from '@/domain'
-import { fromAnyReadRequestToReadRequestDTO, StringUtilities } from '@/data'
 import { UpdateOfficeRequestDTO } from '@/domain/features/office/update/request-dto'
 import { UpdateOfficeResponseDTO } from '@/domain/features/office/update/response-dto'
+import { BaseCrudViewModelMapper } from '@/presentation/base-crud-view-model-mapper'
+import { transformRequestToFilters } from '@/presentation/request-to-filters'
 
 export interface CreateOfficeRequestViewModel
   extends CreateOfficeRequestDTO { }
@@ -77,8 +79,14 @@ export class OfficeViewModelMapper implements BaseCrudViewModelMapper {
     return response
   }
 
-  fromReadRequestViewModelToReadRequestDTO(request: ReadOfficeRequestViewModel): ReadCrudRequestDTO {
-    return fromAnyReadRequestToReadRequestDTO({ request })
+  fromReadRequestViewModelToFilters(request: ReadOfficeRequestViewModel): Filter[] {
+    return transformRequestToFilters({
+      request,
+      fieldsAndFilters: {
+        id: 'equalTo'
+      },
+      fieldsToInclude: officeFieldsToInclude
+    })
   }
 
   fromReadOneResponseDTOToReadResponseOneViewModel(

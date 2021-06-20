@@ -1,10 +1,11 @@
+import { StateModelMapper } from '@/data'
 import {
   ReadStateResponseDTO,
 } from '@/domain'
-import { StateModelMapper } from '@/data'
 import { StateViewModelMapper } from '@/presentation'
-import { CrudFactory } from './crud'
+
 import { RequestParamsWithUser } from '../request-params'
+import { CrudFactory } from './crud'
 
 export class StateFactory {
   private readonly StateCrudFactory: CrudFactory<undefined, ReadStateResponseDTO, ReadStateResponseDTO, undefined>

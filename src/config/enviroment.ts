@@ -1,8 +1,11 @@
+require('./loader')
+
 const enviroment = (process.env.NODE_ENV || 'dev').toUpperCase()
 
 export const enviromentConfig = {
   enviroment,
-  isProductionEnviroment: (): boolean => {
+  /* istanbul ignore next */
+  isProductionEnvironment: (): boolean => {
     return enviroment === 'PRODUCTION'
   },
   isDevOrTestEnviroment: (): boolean => {

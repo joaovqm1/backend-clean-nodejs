@@ -7,7 +7,8 @@ export type HttpResponse<T = any> = {
 }
 
 export function serverError(error: Error): HttpResponse {
-  if (error instanceof AppError) {
+  console.log(error)
+  if (error instanceof AppError && error.isExpectedError) {
     return {
       statusCode: error.code || 500,
       data: error.message,
@@ -17,8 +18,7 @@ export function serverError(error: Error): HttpResponse {
     logger.emptyLine()
     return {
       statusCode: 500,
-      data:
-        'Ocorreu um erro inesperado com sua requisição. Por favor, entre em contato com o suporte',
+      data: 'Ocorreu um erro inesperado com sua requisição. Por favor, entre em contato com o suporte',
     }
   }
 }

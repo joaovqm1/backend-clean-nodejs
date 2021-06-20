@@ -7,7 +7,7 @@ import {
   UserModel
 } from '@/data/features'
 import { UserRepositoryImpl } from '@/infra'
-import { officeEntity } from '@/test/utilities/mocks'
+import { mockOfficeEntity } from '@/test/utilities/mocks'
 
 afterEach(function() {
   sinon.restore()
@@ -52,7 +52,7 @@ describe('Data - User Login Use Case', function() {
 
     const loggedUser = {
       ...userModel,
-      office: officeEntity
+      office: mockOfficeEntity
     }
 
     sinon.stub(userRepository, 'logIn')
@@ -61,7 +61,7 @@ describe('Data - User Login Use Case', function() {
 
     sinon.stub(readOfficeUseCase, 'getOfficeForLoggedUser')
       .withArgs(loggedUser.officeId)
-      .resolves(officeEntity)
+      .resolves(mockOfficeEntity)
 
     // Act and assert
     expect(await loginUseCase.logIn(request)).toEqual(loggedUser)

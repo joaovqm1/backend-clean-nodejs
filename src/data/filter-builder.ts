@@ -1,4 +1,4 @@
-import { Filter } from './contracts'
+import { Filter } from '@/domain'
 
 export class FilterBuilder {
   private readonly filters: Filter[] = []
@@ -79,6 +79,11 @@ export class FilterBuilder {
 
   lessThanOrEqualTo(field: string, value: any): FilterBuilder {
     this.filters.push(this.getFilter('lessThanOrEqualTo', field, value))
+    return this
+  }
+
+  containedIn(field: string, values: any[]): FilterBuilder {
+    this.filters.push(this.getFilter('containedIn', field, values))
     return this
   }
 

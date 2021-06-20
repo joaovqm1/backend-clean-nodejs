@@ -1,10 +1,10 @@
+import faker from 'faker'
 import sinon from 'sinon'
 
-import { CreateUserRequestDTO, ReadUserResponseDTO, UserEntity } from '@/domain'
+
+import { AfterCreateCrudUseCase, CreateUserRequestDTO, ReadUserResponseDTO } from '@/domain'
 import {
   UserModelMapper,
-  ReadCrudUseCaseImpl,
-  ReadUserUseCaseImpl,
   CreateUserUseCaseImpl,
   UserModel
 } from '@/data'
@@ -12,25 +12,25 @@ import {
   CreateCrudRepositoryImpl,
   AuthenticationImpl
 } from '@/infra'
+import { mockEmailSender } from '@/test/unit/third-party/mocks'
+import { mockHtmlMounter } from '@/test/unit/utilities/mocks'
+import { mockUserEntity } from '@/test/utilities/mocks'
 
 describe('Data - Create User Use Case', function() {
   const userMapper = new UserModelMapper(undefined)
   const createRepository = new CreateCrudRepositoryImpl(undefined)
-  const getUserCrudUseCase = new ReadCrudUseCaseImpl<UserEntity>({
-    repository: undefined,
-    filterTransformer: undefined,
-    modelMapper: undefined
-  })
-  const readUserUseCase = new ReadUserUseCaseImpl({
-    readCrudUseCase: getUserCrudUseCase
-  })
+  const mockAfterCreate: AfterCreateCrudUseCase<any> = {
+    fetchAfterCreation: jest.fn()
+  }
   const authenticationImpl = new AuthenticationImpl()
 
   const createUserUseCase = new CreateUserUseCaseImpl({
     repository: createRepository,
-    afterCreateUseCase: readUserUseCase,
+    afterCreateUseCase: mockAfterCreate,
     modelMapper: userMapper,
-    authentication: authenticationImpl
+    authentication: authenticationImpl,
+    emailSender: mockEmailSender,
+    htmlMounter: mockHtmlMounter
   })
 
   it('Should return new user when passed a valid request to create it', async function() {
@@ -67,11 +67,14 @@ describe('Data - Create User Use Case', function() {
       ...model
     }
 
-    sinon.stub(readUserUseCase, 'fetchAfterCreation')
+    sinon.stub(mockAfterCreate, 'fetchAfterCreation')
       .withArgs(model.id)
       .resolves(fetchedUser)
 
+    const sendWelcomeEmailSpy = sinon.stub(createUserUseCase, 'sendWelcomeEmail')
+
     expect(await createUserUseCase.create(request)).toEqual(fetchedUser)
+    expect(sendWelcomeEmailSpy.getCall(0).args[0]).toEqual(fetchedUser)
   })
 
   it('Should create model and set password hash', async function() {
@@ -108,6 +111,25 @@ describe('Data - Create User Use Case', function() {
       ...model,
       passwordHash
     })
+  })
+
+  it('Should send welcome email to user', async function() {
+    // Arrange
+    const mockEmailId = faker.datatype.uuid()
+
+    sinon.stub(mockHtmlMounter, 'mount').withArgs('welcome').returns('|username|')
+    sinon.stub(mockEmailSender, 'send').withArgs({
+      toAddress: mockUserEntity.email,
+      subject: 'Bem vindo(a) ao Projetei',
+      html: mockUserEntity.name
+    }).resolves(mockEmailId)
+
+    // Act
+    const receivedResponse = await createUserUseCase.sendWelcomeEmail(mockUserEntity)
+
+    // Assert
+    const expectedResponse = mockEmailId
+    expect(receivedResponse).toEqual(expectedResponse)
   })
 })
 

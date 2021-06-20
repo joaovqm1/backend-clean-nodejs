@@ -5,7 +5,7 @@ export class RequestNoAuthenticatedError extends AppError {
     super({
       code: 401,
       name: RequestNoAuthenticatedError.name,
-      description: 'Não foi possível localizar o usuário da requisição'
+      description: 'Você parece não ter acesso para acessar esse recurso'
     })
   }
 }

@@ -30,6 +30,11 @@ describe('Model Factory', () => {
   it('Should get file by name', async function() {
     expect(modelFactory.get('user')).toEqual(User)
   })
+
+  it('Should throw an error if model not found', async function() {
+    expect(() => modelFactory.get('model'))
+      .toThrowError('O model model não foi encontrado')
+  })
 })
 
 afterEach(() => {

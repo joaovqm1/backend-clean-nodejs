@@ -89,7 +89,7 @@ export function checkUpdatedObjectEqualsExpected(params: CheckParams): void {
   }
 
   if (shouldCheckUpdaterId) {
-    expect(typeof params.receivedObject.updater).toBe('number')
+    expect(typeof params.receivedObject.updaterId).toBe('number')
   }
 
   return checkReceivedObjectEqualsExpected(params)

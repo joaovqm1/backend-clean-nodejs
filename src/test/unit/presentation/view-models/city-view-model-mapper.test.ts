@@ -3,8 +3,9 @@ import {
   ReadCityRequestViewModel,
   ReadCityResponseViewModel
 } from '@/presentation'
-import { ReadCrudRequestDTO, ReadCityResponseDTO, cityFieldsToInclude } from '@/domain'
+import { ReadCrudRequestDTO, ReadCityResponseDTO, cityFieldsToInclude, Filter } from '@/domain'
 import { mockCityEntity } from '@/test/utilities/mocks'
+import { mockFiltersWithId } from '../mocks'
 
 describe('City View Model Mapper', function() {
   const viewModelMapper = new CityViewModelMapper()
@@ -17,16 +18,9 @@ describe('City View Model Mapper', function() {
         id: 1
       }
 
-      const requestDTO: ReadCrudRequestDTO = {
-        filters: [{
-          equalTo: {
-            id: requestViewModel.id
-          }
-        }],
-        fieldsToInclude: cityFieldsToInclude
-      }
+      const mockFilters: Filter[] = mockFiltersWithId.concat([{ name: 'include', fields: cityFieldsToInclude }])
 
-      expect(viewModelMapper.fromReadRequestViewModelToReadRequestDTO(requestViewModel)).toEqual(requestDTO)
+      expect(viewModelMapper.fromReadRequestViewModelToFilters(requestViewModel)).toEqual(mockFilters)
     })
 
     it('Should transform read one response dto to read one response view mdoel', async function() {

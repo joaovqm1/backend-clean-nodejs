@@ -1,21 +1,22 @@
+import { serverConfig } from '@/config'
 import {
   DateUtilities,
+  FileUtilities,
+  HTMLMounter,
+  HttpRequest,
   ObjectUtilities,
   StringUtilities,
-  FilterTransformer,
-  FileUtilities,
-  HttpRequest,
+  TypeUtilities,
 } from '@/data/contracts'
 import {
   DateUtilitiesImpl,
+  FileUtilitiesImpl,
+  HTMLMounterImpl,
+  HttpRequestImpl,
   ObjectUtilitiesImpl,
   StringUtilitiesImpl,
-  FileUtilitiesImpl,
-  FilterTransformerImpl,
-  HttpRequestImpl,
+  TypeUtilitiesImpl,
 } from '@/utilities'
-
-import { serverConfig } from '@/config'
 
 export class UtilitiesFactory {
   static getDate(): DateUtilities {
@@ -26,6 +27,10 @@ export class UtilitiesFactory {
     return new FileUtilitiesImpl()
   }
 
+  static getHTMLMounter(dateUtilities: DateUtilities, fileUtilities: FileUtilities): HTMLMounter {
+    return new HTMLMounterImpl({ dateUtilities, fileUtilities })
+  }
+
   static getObject(): ObjectUtilities {
     return new ObjectUtilitiesImpl(UtilitiesFactory.getDate())
   }
@@ -34,16 +39,18 @@ export class UtilitiesFactory {
     return new StringUtilitiesImpl()
   }
 
-  static getRequest(url: string = serverConfig.url): HttpRequest {
-    return new HttpRequestImpl(url)
+  static getType(): TypeUtilities {
+    return new TypeUtilitiesImpl()
   }
 
-  static getFilterTransformer(): FilterTransformer {
-    return new FilterTransformerImpl()
+  static getRequest(url: string = serverConfig.url): HttpRequest {
+    return new HttpRequestImpl(url)
   }
 }
 
 export const objectUtilities = UtilitiesFactory.getObject()
 export const dateUtilities = UtilitiesFactory.getDate()
 export const stringUtilities = UtilitiesFactory.getString()
+export const typeUtilities = UtilitiesFactory.getType()
 export const fileUtilities = UtilitiesFactory.getFile()
+export const htmlMounter = UtilitiesFactory.getHTMLMounter(dateUtilities, fileUtilities)

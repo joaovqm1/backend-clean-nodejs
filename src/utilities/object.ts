@@ -1,10 +1,9 @@
 import lodash from 'lodash'
-import * as stringSimilarity from 'string-similarity'
 
 import { DateUtilities, ObjectUtilities } from '@/data/contracts'
 
 export class ObjectUtilitiesImpl implements ObjectUtilities {
-  constructor(private readonly dateUtilities: DateUtilities) {}
+  constructor(private readonly dateUtilities: DateUtilities) { }
 
   isDate(object: any): boolean {
     if (
@@ -40,42 +39,11 @@ export class ObjectUtilitiesImpl implements ObjectUtilities {
     return typeof object === 'string'
   }
 
-  getRandomString(
-    size = 12,
-    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  ): string {
-    let string = ''
-    const numberOfCharacters = characters.length
-    for (let i = 0; i < size; i++) {
-      string += characters.charAt(
-        Math.floor(Math.random() * numberOfCharacters)
-      )
-    }
-    return string
-  }
-
   cloneObject(object: any): any {
     return lodash.cloneDeep(object)
   }
 
-  stringsAreSimilar(string1: string, string2: string, limiar = 0.95): boolean {
-    if (
-      stringSimilarity.compareTwoStrings(
-        string1.toLowerCase(),
-        string2.toLowerCase()
-      ) > limiar
-    ) {
-      return true
-    } else {
-      return false
-    }
-  }
-
   setNumberPrecision(number: number, precision: number = 4): number {
-    if (number) {
-      return parseFloat(number.toFixed(precision))
-    } else {
-      return undefined
-    }
+    return parseFloat(number?.toFixed(precision))
   }
 }

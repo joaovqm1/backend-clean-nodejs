@@ -1,35 +1,37 @@
 import {
-  CreateOfficeRequestDTO,
-  CreateUserForOfficeUseCase,
-  ReadOfficeResponseDTO,
-  ReadUserResponseDTO,
-  ReadOfficeUseCase,
-  ReadCrudUseCase,
-  UpdateOfficeRequestDTO,
-  CreateUserRequestDTO,
-  UpdateUserRequestDTO,
-  CreateCrudUseCase,
-  ReadUserUseCase,
-} from '@/domain'
-import {
-  OfficeModelMapper,
+  ChangePasswordUseCaseImpl,
   CreateOfficeUseCaseImpl,
   CreateUserForOfficeUseCaseImpl,
   CreateUserUseCaseImpl,
   LogInUseCaseImpl,
-  UserModelMapper,
+  OfficeModelMapper,
+  ReadOfficeUseCaseImpl,
+  SendPasswordRecoveryEmailUseCaseImpl,
+  UserModelMapper
 } from '@/data'
-import { OfficeViewModelMapper, UserViewModelMapper } from '@/presentation'
-
-import { stringUtilities } from '@/main/factories/utilities'
-import { CrudFactory } from './crud'
+import {
+  ChangePasswordUseCase,
+  CreateCrudUseCase,
+  CreateOfficeRequestDTO,
+  CreateUserForOfficeUseCase,
+  CreateUserRequestDTO,
+  ReadCrudUseCase,
+  ReadOfficeResponseDTO,
+  ReadOfficeUseCase,
+  ReadUserResponseDTO,
+  SendPasswordRecoveryEmailUseCase,
+  UpdateOfficeRequestDTO,
+  UpdateUserRequestDTO,
+  userFieldsToInclude,
+} from '@/domain'
 import { UserRepositoryImpl } from '@/infra'
-import { UserControllerFacade } from '@/presentation/features/user/user-facade'
-import { LoginController } from '@/presentation/features/user/login-controller'
-import { RequestParamsWithUser } from '../request-params'
-import { ReadOfficeUseCaseImpl } from '@/data/features/office/read/use-case'
-import { ReadUserUseCaseImpl } from '@/data/features/user/read/use-case'
+import { htmlMounter, stringUtilities } from '@/main/factories/utilities'
+import { GenericController, OfficeViewModelMapper, UserViewModelMapper } from '@/presentation'
+
 import { InfraFactory } from '../infra/infra'
+import { RequestParamsWithUser } from '../request-params'
+import { getEmailSender } from '../third-party'
+import { CrudFactory } from './crud'
 
 export class OfficeFactory {
   private readonly officeCrudFactory: CrudFactory<CreateOfficeRequestDTO, ReadOfficeResponseDTO, ReadOfficeResponseDTO, UpdateOfficeRequestDTO>
@@ -84,7 +86,6 @@ export class UserFactory {
   private readonly userRepository: UserRepositoryImpl
   private readonly createUserUseCase: CreateCrudUseCase<CreateUserRequestDTO, ReadUserResponseDTO>
 
-  private readonly readUserUseCase: ReadUserUseCase
   private readonly modelMapper: UserModelMapper
 
   // eslint-disable-next-line max-lines-per-function
@@ -98,9 +99,9 @@ export class UserFactory {
       entityName: 'user',
       modelMapper: this.modelMapper,
       viewModelMapper: new UserViewModelMapper(stringUtilities),
-      uniqueConstraintError:
-        'Já existe um usuário cadastrado com esse username ou email',
+      uniqueConstraintError: 'Já existe um usuário cadastrado com esse username ou email',
       isPublicTable: true,
+      fieldsToIncludeOnQuery: userFieldsToInclude
     })
     this.userRepository = new UserRepositoryImpl({
       readUserCrudRepository: this.userCrudFactory.getReadRepository(),
@@ -108,16 +109,13 @@ export class UserFactory {
       authentication: InfraFactory.getAuthentication(),
       stringUtilities
     })
-    this.readUserUseCase = new ReadUserUseCaseImpl({
-      readCrudUseCase: this.userCrudFactory.getReadUseCase(),
-    })
-    this.userCrudFactory.setAfterCreateCrudUseCase(this.readUserUseCase)
-    this.userCrudFactory.setAfterUpdateCrudUseCase(this.readUserUseCase)
     this.createUserUseCase = new CreateUserUseCaseImpl({
       repository: this.userCrudFactory.getCreateRepository(),
-      afterCreateUseCase: this.readUserUseCase,
+      afterCreateUseCase: this.userCrudFactory.getAfterCreateUseCase(),
       modelMapper: this.modelMapper,
       authentication: InfraFactory.getAuthentication(),
+      htmlMounter,
+      emailSender: getEmailSender()
     })
     this.userCrudFactory.setCreateCrudUseCase(this.createUserUseCase)
   }
@@ -128,17 +126,42 @@ export class UserFactory {
       readOfficeUseCase: this.officeFactory.getReadOfficeUseCase(),
     })
 
-    const logInController = new LoginController(logInUseCase)
+    const logInController = new GenericController({ useCase: logInUseCase })
 
-    const userCrudControllerFacade = this.userCrudFactory.getControllerFacade()
-
-    return new UserControllerFacade(userCrudControllerFacade, logInController)
+    return {
+      ...this.userCrudFactory.getControllerFacade(),
+      logIn: logInController,
+      sendPasswordRecoveryEmail: new GenericController({
+        useCase: this.getSendPasswordRecoveryEmailUseCase()
+      }),
+      changePassword: new GenericController({
+        useCase: this.getChangePasswordUseCase()
+      })
+    }
   }
 
   getCreateUserForOfficeUseCase(): CreateUserForOfficeUseCase {
     return new CreateUserForOfficeUseCaseImpl({
       createUserUseCase: this.userCrudFactory.getCreateUseCase(),
       modelMapper: this.modelMapper,
+    })
+  }
+
+  getSendPasswordRecoveryEmailUseCase(): SendPasswordRecoveryEmailUseCase {
+    return new SendPasswordRecoveryEmailUseCaseImpl({
+      emailSender: getEmailSender(),
+      htmlMounter,
+      readUserUseCase: this.userCrudFactory.getReadUseCase(),
+      updateUserUseCase: this.userCrudFactory.getUpdateUseCase(),
+      stringUtilities
+    })
+  }
+
+  getChangePasswordUseCase(): ChangePasswordUseCase {
+    return new ChangePasswordUseCaseImpl({
+      readUserUseCase: this.userCrudFactory.getReadUseCase(),
+      updateUserUseCase: this.userCrudFactory.getUpdateUseCase(),
+      authentication: InfraFactory.getAuthentication()
     })
   }
 }

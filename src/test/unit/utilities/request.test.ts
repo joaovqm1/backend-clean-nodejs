@@ -10,7 +10,7 @@ afterEach(function() {
 })
 
 describe('Utilities - Request Manager', function() {
-  const requestManager = new HttpRequestImpl('baseURL', 5000)
+  const requestManager = new HttpRequestImpl('baseURL')
   const postPutParms: PostPutParams = {
     url: 'baseURL',
     body: { nome: 'nome' },

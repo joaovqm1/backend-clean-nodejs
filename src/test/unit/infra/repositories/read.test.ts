@@ -1,11 +1,10 @@
+import sinon from 'sinon'
+
 import {
   ReadApiImpl,
   ReadCrudRepositoryImpl
 } from '@/infra'
-
-import { Filter } from '@/data/contracts'
-import sinon from 'sinon'
-import { GetManyResult } from '@/domain'
+import { Filter, GetManyResult } from '@/domain'
 describe('Infra - Read Crud Repository', () => {
   const readImpl: ReadApiImpl = new ReadApiImpl({
     sequelizeModel: undefined,

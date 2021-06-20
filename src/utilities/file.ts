@@ -1,7 +1,7 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import fs, { ReadStream } from 'fs'
 
 import { FileUtilities } from '@/data/contracts'
-
 export class FileUtilitiesImpl implements FileUtilities {
   get(path: string): string {
     return fs.readFileSync(path, 'utf8')
@@ -20,6 +20,7 @@ export class FileUtilitiesImpl implements FileUtilities {
     return fs.readdirSync(dir, null)
   }
 
+  /* istanbul ignore next */
   getReadStream(path: string): ReadStream {
     return fs.createReadStream(path)
   }

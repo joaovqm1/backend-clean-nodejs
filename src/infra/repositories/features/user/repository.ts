@@ -1,14 +1,13 @@
 import {
-  UserRepository,
-  Filter,
-  FilterBuilder,
-  UserModel,
-  ReadCrudRepository,
-  UpdateCrudRepository,
-  StringUtilities,
   Authentication,
+  FilterBuilder,
+  ReadCrudRepository,
+  StringUtilities,
+  UpdateCrudRepository,
+  UserModel,
+  UserRepository,
 } from '@/data'
-import { InvalidCredentialsError } from '@/domain'
+import { Filter, InvalidCredentialsError } from '@/domain'
 
 interface Params {
   readUserCrudRepository: ReadCrudRepository

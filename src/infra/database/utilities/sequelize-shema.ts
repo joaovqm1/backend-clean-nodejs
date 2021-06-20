@@ -23,9 +23,8 @@ export class SequelizeSchemaImpl implements SequelizeSchema {
     const fields: string[] = []
 
     for (const field in properties) {
-      if (properties[field].items?.$ref) {
-        fields.push(field.toLowerCase())
-      } else if (properties[field].$ref) {
+      // eslint-disable-next-line security/detect-object-injection
+      if (properties[field].items?.$ref || properties[field].$ref) {
         fields.push(field.toLowerCase())
       }
     }
@@ -39,6 +38,7 @@ export class SequelizeSchemaImpl implements SequelizeSchema {
     const fields: string[] = []
 
     for (const field in properties) {
+      // eslint-disable-next-line security/detect-object-injection
       const isForeignKey = properties[field].items?.$ref || properties[field].$ref
       if (isForeignKey) {
         continue

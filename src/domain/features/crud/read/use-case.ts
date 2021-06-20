@@ -1,4 +1,4 @@
-import { ReadCrudRequestDTO } from './request-dto'
+import { Filter } from '@/domain/filters'
 
 export interface GetManyResult {
   totalItems?: number
@@ -7,14 +7,10 @@ export interface GetManyResult {
   items: any[]
 }
 
-export interface ReadCrudUseCase<
-  ResponseOneDTO,
-  ResponseManyDTO = ResponseOneDTO
-> {
-  getOne: (query: ReadCrudRequestDTO) => Promise<ResponseOneDTO>
-  getMany: (
-    query: ReadCrudRequestDTO
-  ) => Promise<{
+export interface ReadCrudUseCase<ResponseOneDTO, ResponseManyDTO = ResponseOneDTO> {
+  getOne: (filters: Filter[]) => Promise<ResponseOneDTO>
+  getById: (id: number, extraFilters?: Filter[]) => Promise<ResponseOneDTO>
+  getMany: (query: Filter[]) => Promise<{
     totalItems?: number
     currentPage?: number
     totalPages?: number

@@ -1,10 +1,11 @@
+import { CityModelMapper } from '@/data'
 import {
   ReadCityResponseDTO,
 } from '@/domain'
-import { CityModelMapper } from '@/data'
 import { CityViewModelMapper } from '@/presentation'
-import { CrudFactory } from './crud'
+
 import { RequestParamsWithUser } from '../request-params'
+import { CrudFactory } from './crud'
 
 export class CityFactory {
   private readonly CityCrudFactory: CrudFactory<undefined, ReadCityResponseDTO, ReadCityResponseDTO, undefined>

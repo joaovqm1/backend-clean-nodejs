@@ -14,6 +14,21 @@ module.exports = {
     '<rootDir>/src/presentation/contracts/(?!@foo)',
     '<rootDir>/src/test/(?!@foo)'
   ],
+  collectCoverageFrom: [
+    'src/data/**/*.ts',
+    'src/infra/**/*.ts',
+    '!src/infra/database/models/**.ts',
+    '!src/infra/database/migrations/**.ts',
+    '!src/infra/database/seeders/**.ts',
+    '!src/infra/database/scripts/erd.ts',
+    '!src/infra/database/utilities/default-fields.ts',
+    '!src/infra/database/utilities/foreing-keys.ts',
+    '!src/utilities/winston.ts',
+    'src/presentation/**/*.ts',
+    'src/third-party/**/*.ts',
+    'src/utilities/**/*.ts'
+  ],
+
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.json',
@@ -33,14 +48,18 @@ module.exports = {
     '<rootDir>/node_modules/(?!@foo)'
   ],
   testResultsProcessor: 'jest-sonar-reporter',
-  /*   coverageThreshold: {
+  coverageThreshold: {
     global: {
-      branches: 60,
-      functions: 80,
-      lines: 80,
-      statements: 80
+      branches: 80,
+      functions: 98,
+      lines: 98,
+      statements: 98
     }
-  }, */
+  },
   preset: 'ts-jest',
-  testMatch: null
+  testMatch: null,
+  reporters: [
+    'default',
+    ['./node_modules/jest-html-reporter', { 'pageTitle': 'Test Report' }]
+  ]
 }

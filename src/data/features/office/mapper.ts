@@ -4,6 +4,7 @@ import {
   ReadOfficeResponseDTO,
   UpdateOfficeRequestDTO,
 } from '@/domain'
+
 import { OfficeModel } from './model'
 
 export class OfficeModelMapper implements BaseModelMapper {

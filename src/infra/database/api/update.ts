@@ -1,7 +1,8 @@
 import { Model } from 'sequelize'
 
-import { ErrorHandler } from '../error-handler'
 import { UpdateApi } from '@/infra/repositories/contracts'
+
+import { ErrorHandler } from '../error-handler'
 interface Params {
   sequelizeModel: any
   errorHandler: ErrorHandler
@@ -9,7 +10,7 @@ interface Params {
 }
 
 export class UpdateApiImpl implements UpdateApi {
-  constructor(private readonly params: Params) {}
+  constructor(private readonly params: Params) { }
 
   async update(objectToUpdate: any): Promise<any> {
     const sequelizeObject = await this.params.sequelizeModel.findOne({
@@ -23,6 +24,7 @@ export class UpdateApiImpl implements UpdateApi {
     if (this.shouldAddUpdaterId()) {
       sequelizeObject.updaterId = this.params.userId
     }
+
     return this.saveAndHandleErrors(sequelizeObject)
   }
 

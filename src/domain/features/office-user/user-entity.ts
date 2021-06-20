@@ -7,8 +7,9 @@ export interface UserEntity extends BaseEntity {
   email: string
   username: string
   birthdate?: string
-  cpf: string
+  cpf?: string
   token: string
+  recoveryToken?: string
 }
 
 interface Role {

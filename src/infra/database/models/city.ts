@@ -1,10 +1,11 @@
-import { getForeignKeyOptions } from '@/infra/database/utilities'
-import { Model, INTEGER, STRING } from 'sequelize'
+import { INTEGER, Model, STRING } from 'sequelize'
+
 import { sequelize } from '@/infra/database/sequelize'
+import { getForeignKeyOptions } from '@/infra/database/utilities'
 
 import State from './state'
 
-class CityModel extends Model {}
+class CityModel extends Model { }
 
 CityModel.init(
   {
@@ -29,8 +30,8 @@ CityModel.init(
   },
   {
     sequelize,
-    timestamps: false,
     tableName: 'cities',
+    timestamps: false,
     name: {
       singular: 'city',
       plural: 'cities',

@@ -1,15 +1,15 @@
+import { Filter, GetManyResult } from '@/domain'
 import { ReadApi } from '@/infra/repositories/contracts'
-import { Filter } from '@/data/contracts'
-import { GetManyResult } from '@/domain'
-import { QueryCreater } from './query'
+
+import { QueryCreaterImpl } from './query'
 
 interface Params {
   sequelizeModel: any
-  queryCreater: QueryCreater
+  queryCreater: QueryCreaterImpl
 }
 export class ReadApiImpl implements ReadApi {
   private readonly sequelizeModel: any
-  private readonly queryCreater: QueryCreater
+  private readonly queryCreater: QueryCreaterImpl
 
   constructor(params: Params) {
     this.sequelizeModel = params.sequelizeModel

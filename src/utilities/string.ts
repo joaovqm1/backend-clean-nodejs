@@ -3,13 +3,13 @@ import * as stringSimilarity from 'string-similarity'
 import { StringUtilities } from '@/data/contracts'
 
 export class StringUtilitiesImpl implements StringUtilities {
-  removeSpecialCharactersFromString(string: string = ''): string {
-    const newString = string.replace(/[/().-]+/g, '')
+  removeSpecialCharactersFromString(string: string): string {
+    const newString = string?.replace(/[/().-]+/g, '')
     return this.removeWhiteSpace(newString)
   }
 
   removeWhiteSpace(string: string): string {
-    return string.replace(/\s/g, '')
+    return string?.replace(/\s/g, '')
   }
 
   getRandomString(
@@ -27,15 +27,9 @@ export class StringUtilitiesImpl implements StringUtilities {
   }
 
   stringsAreSimilar(string1: string, string2: string, limiar = 0.95): boolean {
-    if (
-      stringSimilarity.compareTwoStrings(
-        string1.toLowerCase(),
-        string2.toLowerCase()
-      ) > limiar
-    ) {
-      return true
-    } else {
-      return false
-    }
+    return stringSimilarity.compareTwoStrings(
+      string1.toLowerCase(),
+      string2.toLowerCase()
+    ) > limiar
   }
 }

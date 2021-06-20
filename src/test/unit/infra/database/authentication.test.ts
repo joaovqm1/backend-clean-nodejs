@@ -28,6 +28,15 @@ describe('Authentication', () => {
     expect(await authenticationImpl.comparePasswordAndHash(password1, password2)).toBe(false)
   })
 
+  it('Should compare password and empty hash and return false', async () => {
+    sinon.stub(bcrypt, 'compare')
+      .withArgs(password1, '')
+      .resolves(false)
+
+    //Act and Assert
+    expect(await authenticationImpl.comparePasswordAndHash(password1)).toBe(false)
+  })
+
   it('Should compare password and hash and return true', async () => {
     sinon.stub(bcrypt, 'compare')
       .withArgs(password1, password2)

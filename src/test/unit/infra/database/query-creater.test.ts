@@ -3,18 +3,19 @@ import {
 } from '@/infra'
 import { StringUtilitiesImpl } from '@/utilities'
 import { DataFactory } from '@/main/factories/data'
-import { Filter } from '@/data/contracts'
+import { Filter } from '@/domain'
 import { Op } from 'sequelize'
 
 import AnySequelizeModel from '@/infra/database/models/user'
 
 import sinon from 'sinon'
-import { QueryCreater } from '@/infra/database/api/read/query'
+import { QueryCreaterImpl } from '@/infra/database/api/read/query'
 import UserModel from '@/infra/database/models/user'
 import OfficeModel from '@/infra/database/models/office'
 import CityModel from '@/infra/database/models/city'
 import StateModel from '@/infra/database/models/state'
 import DocumentModel from '@/infra/database/models/document'
+import { FilterBuilder } from '@/data'
 
 describe('Infra  - Query Creater', () => {
   const sequelizeSchema = new SequelizeSchemaImpl()
@@ -29,12 +30,13 @@ describe('Infra  - Query Creater', () => {
     stringUtilities,
     currentUser: undefined,
     userId: 1,
+    officeId: 1,
     isHybridTable: false,
     isPublicTable: false,
     officeIdFieldToQuery: 'officeId'
   }
 
-  const queryCreator = new QueryCreater(params)
+  const queryCreator = new QueryCreaterImpl(params)
 
   const filters: Filter[] = [{
     name: 'equalTo',
@@ -64,7 +66,7 @@ describe('Infra  - Query Creater', () => {
       value: 'value'
     }]
 
-    const queryCreator = new QueryCreater({
+    const queryCreator = new QueryCreaterImpl({
       ...params,
       isHybridTable: true
     })
@@ -100,7 +102,7 @@ describe('Infra  - Query Creater', () => {
 
   it('Should return true when table is hybrid and there is no exists officeId filter', () => {
     // Arrange
-    const queryCreator = new QueryCreater({
+    const queryCreator = new QueryCreaterImpl({
       ...params,
       isHybridTable: true
     })
@@ -262,6 +264,33 @@ describe('Infra  - Query Creater', () => {
     expect(exptedQuery).toEqual(receivedQuery)
   })
 
+  it('Should create query with exists', () => {
+    // Arrange 
+    sinon.stub(queryCreator, 'shouldAddOfficeClausure')
+      .returns(false)
+
+    sinon.stub(queryCreator, 'shouldUseOrClausureForOffice')
+      .returns(false)
+
+    const filters: Filter[] = [{
+      name: 'exists',
+      field: 'field'
+    }]
+
+    // Act 
+    const receivedQuery = queryCreator.create(filters)
+
+    // Assert 
+    const exptedQuery = {
+      where: {
+        field: {
+          [Op.not]: null
+        }
+      }
+    }
+    expect(exptedQuery).toEqual(receivedQuery)
+  })
+
   it('Should create query with equalTo', () => {
     // Arrange 
     sinon.stub(queryCreator, 'shouldAddOfficeClausure')
@@ -284,6 +313,32 @@ describe('Infra  - Query Creater', () => {
       where: {
         field: {
           [Op.eq]: 'value'
+        }
+      }
+    }
+    expect(exptedQuery).toEqual(receivedQuery)
+  })
+
+  it('Should create query with containedIn', () => {
+    // Arrange 
+    sinon.stub(queryCreator, 'shouldAddOfficeClausure')
+      .returns(false)
+
+    sinon.stub(queryCreator, 'shouldUseOrClausureForOffice')
+      .returns(false)
+
+    const filters: Filter[] = new FilterBuilder()
+      .containedIn('field', ['values'])
+      .build()
+
+    // Act 
+    const receivedQuery = queryCreator.create(filters)
+
+    // Assert 
+    const exptedQuery = {
+      where: {
+        field: {
+          [Op.in]: ['values']
         }
       }
     }

@@ -1,6 +1,71 @@
-import { INTEGER, DATE } from 'sequelize'
+const { DATE, INTEGER } = require('sequelize')
 
-export const defaultFieldsMigrations = {
+const officeId = {
+  type: INTEGER,
+  allowNull: false,
+  references: {
+    model: 'offices',
+    key: 'id',
+  },
+  onDelete: 'CASCADE',
+}
+
+const createrId = {
+  type: INTEGER,
+  allowNull: false,
+  references: {
+    model: 'users',
+    key: 'id',
+  },
+  onDelete: 'NO ACTION',
+  onUpdate: 'CASCADE',
+}
+
+const updaterId = {
+  type: INTEGER,
+  references: {
+    model: 'users',
+    key: 'id',
+  },
+  onDelete: 'NO ACTION',
+  onUpdate: 'CASCADE',
+}
+
+const createdAt = {
+  type: DATE
+}
+
+const updatedAt = {
+  type: DATE
+}
+
+const deletedAt = {
+  type: DATE
+}
+
+module.exports = {
+  id: {
+    type: INTEGER,
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  stateId: {
+    type: INTEGER,
+    allowNull: false,
+    references: {
+      model: 'states',
+      key: 'id'
+    }
+  },
+  cityId: {
+    type: INTEGER,
+    allowNull: false,
+    references: {
+      model: 'cities',
+      key: 'id'
+    }
+  },
   createrId: {
     type: INTEGER,
     allowNull: false,
@@ -21,21 +86,40 @@ export const defaultFieldsMigrations = {
     onUpdate: 'CASCADE',
   },
   createdAt: {
-    type: DATE,
+    type: DATE
   },
   updatedAt: {
-    type: DATE,
+    type: DATE
   },
   deletedAt: {
-    type: DATE,
+    type: DATE
   },
-  officeId: {
+  defaultFields: {
+    createrId,
+    updaterId,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    officeId
+  },
+  officeId,
+  projectId: {
+    type: INTEGER,
+    allowNull: true,
+    references: {
+      model: 'projects',
+      key: 'id'
+    },
+    onDelete: 'CASCADE'
+  },
+  customerSupplierId: {
     type: INTEGER,
     allowNull: false,
     references: {
-      model: 'offices',
+      model: 'customerssuppliers',
       key: 'id',
     },
-    onDelete: 'CASCADE',
-  },
+    onDelete: 'NO ACTION',
+    onUpdate: 'CASCADE',
+  }
 }

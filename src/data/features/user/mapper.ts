@@ -6,6 +6,7 @@ import {
   ReadUserResponseDTO,
   UpdateUserRequestDTO
 } from '@/domain/features'
+
 import { UserModel } from './model'
 
 export class UserModelMapper implements BaseModelMapper {
@@ -27,7 +28,7 @@ export class UserModelMapper implements BaseModelMapper {
     return {
       ...request,
       role: {
-        id: 1,
+        id: 2,
       },
       token: this.stringUtilities.getRandomString(),
     }
@@ -35,12 +36,17 @@ export class UserModelMapper implements BaseModelMapper {
 
   fromUpdateRequestDTOToModel(
     request: UpdateUserRequestDTO
-  ): Omit<UserModel, 'officeId' | 'token'> {
-    return {
+  ): Partial<UserModel> {
+    const model: Partial<UserModel> = {
       ...request,
-      roleId: request.role.id,
       role: undefined,
     }
+
+    if (request.role) {
+      model.roleId = request.role?.id
+    }
+
+    return model
   }
 
   fromModelToReadOneResponse(model: UserModel): ReadUserResponseDTO {

@@ -1,7 +1,7 @@
-import { ReadCityResponseDTO } from '@/domain'
 import { BaseModelMapper } from '@/data/mapper'
-import { CityModel } from './model'
+import { ReadCityResponseDTO } from '@/domain'
 
+import { CityModel } from './model'
 export class CityModelMapper implements BaseModelMapper {
   fromModelToReadOneResponse(model: CityModel): ReadCityResponseDTO {
     return model

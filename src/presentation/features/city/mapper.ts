@@ -1,10 +1,10 @@
-import { fromAnyReadRequestToReadRequestDTO } from '@/data'
 import {
-  ReadCrudRequestDTO,
+  cityFieldsToInclude,
+  Filter,
   ReadCityResponseDTO,
-  cityFieldsToInclude
 } from '@/domain'
 import { BaseCrudViewModelMapper } from '@/presentation/base-crud-view-model-mapper'
+import { transformRequestToFilters } from '@/presentation/request-to-filters'
 
 export interface ReadCityRequestViewModel {
   id?: number
@@ -13,8 +13,15 @@ export interface ReadCityRequestViewModel {
 export interface ReadCityResponseViewModel extends ReadCityResponseDTO { }
 
 export class CityViewModelMapper implements BaseCrudViewModelMapper {
-  fromReadRequestViewModelToReadRequestDTO(request: ReadCityRequestViewModel): ReadCrudRequestDTO {
-    return fromAnyReadRequestToReadRequestDTO({ request, fieldsToInclude: cityFieldsToInclude })
+  fromReadRequestViewModelToFilters(request: ReadCityRequestViewModel): Filter[] {
+    return transformRequestToFilters({
+      request,
+      fieldsAndFilters: {
+        id: 'equalTo',
+        stateId: 'equalTo'
+      },
+      fieldsToInclude: cityFieldsToInclude
+    })
   }
 
   fromReadOneResponseDTOToReadResponseOneViewModel(response: ReadCityResponseDTO): ReadCityResponseViewModel {

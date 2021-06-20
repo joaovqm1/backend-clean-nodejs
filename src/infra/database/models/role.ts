@@ -1,16 +1,14 @@
-import { sequelize } from '@/infra/database/sequelize'
-import { Model, INTEGER, STRING, BOOLEAN } from 'sequelize'
+import { BOOLEAN, Model, STRING } from 'sequelize'
 
-class RoleModel extends Model {}
+import { sequelize } from '@/infra/database/sequelize'
+
+import { idSchema } from '../utilities'
+
+class RoleModel extends Model { }
 
 RoleModel.init(
   {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
+    id: idSchema,
     name: {
       type: STRING,
       allowNull: false,
@@ -30,7 +28,6 @@ RoleModel.init(
   },
   {
     sequelize,
-    timestamps: false,
     tableName: 'roles',
     name: {
       singular: 'role',

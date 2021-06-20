@@ -5,8 +5,8 @@ import {
   OfficeEntity,
   ReadOfficeUseCase,
 } from '@/domain'
-import { UserModel } from '../model'
 
+import { UserModel } from '../model'
 import { UserRepository } from '../repository'
 
 interface Params {

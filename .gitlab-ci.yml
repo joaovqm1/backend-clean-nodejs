@@ -5,47 +5,134 @@ stages:
   - quality
   - security
   - tests
+  - publish
+  - deploy
 
 cache:
   paths:
     - node_modules/
     - yarn.lock
+    - .env
 
-build:
+Build:
   stage: build
-  tags:
-    - docker
   script:
+    - yarn cache clean
     - yarn install
     - yarn build
+    - echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
+    - echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
+    - export TZ="America/Sao_Paulo"
   only:
     - develop
     - master
+    - staging
+    - production
+  artifacts:
+    paths:
+      - node_modules/
+      - yarn.lock
 
-quality:
+Lint:
   stage: quality
   script:
     - yarn lint
-    - yarn verify-dependencies-rules
   only:
     - develop
     - master
+    - staging
+    - production
 
-security:
+Dependencies Violations:
+  stage: quality
+  script:
+    - yarn verify-dependencies-violations
+  only:
+    - develop
+    - master
+    - staging
+    - production
+
+# Packages Audition:
+#   stage: security
+#   script:
+#     - yarn audit-dependencies
+#   only:
+#     - develop
+#     - master
+#     - staging
+#     - production
+
+SAST Analyses with Node Scan:
+  image: opensecurity/nodejsscan:latest
   stage: security
   script:
-    - yarn audit-dependencies
+    - njsscan src/
   only:
     - develop
     - master
+    - staging
+    - production
 
-tests:
+Unit Tests:
   stage: tests
-  tags:
-    - docker
   script:
-    - yarn test
+    - yarn unit-test
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    when: always
+    paths:
+      - test-report.html
+    expire_in: 1 days
   only:
     - develop
     - master
+    - staging
+    - production
+
+Integration Tests:
+  stage: tests
+  script:
+    - yarn integration-test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    when: always
+    paths:
+      - test-report.html
+    expire_in: 1 days
+  only:
+    - develop
+    - master
+    - staging
+    - production
+
+Docker Build:
+  stage: publish
+  image: docker:18.09
+  services:
+    - name: docker:18.09-dind
+  script:
+    - export DOCKER_TAG=$CI_COMMIT_SHORT_SHA
+    - echo $CI_REGISTRY_USER
+    - echo $CI_REGISTRY_PASSWORD
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY_DOCKER
+    - docker build --pull -t registry.gitlab.com/projetei/backend-clean:$DOCKER_TAG .
+    - docker push registry.gitlab.com/projetei/backend-clean:$DOCKER_TAG
+  only:
+    - develop
+    - master
+    - staging
+    - production
+
+Kubernetes Deploy Development:
+  stage: deploy
+  image: fbiopereira/kubectl-do:latest
+  variables:
+    DOCKER_TAG: $CI_COMMIT_SHORT_SHA
+  script:
+    - doctl auth init --access-token $DO_TKN
+    - doctl kubernetes cluster kubeconfig save $DO_K8S
+    - sed -i 's/<DOCKER_TAG>/'$DOCKER_TAG'/g' k8s/backend/deployment.yaml
+    - kubectl apply -f k8s/backend/deployment.yaml
+  only:
+    - production

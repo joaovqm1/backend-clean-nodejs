@@ -1,10 +1,13 @@
+import dotenv from 'dotenv'
+import express from 'express'
 import morgan from 'morgan'
 import morganBody from 'morgan-body'
-import express from 'express'
+import swaggerUi from 'swagger-ui-express'
 
+import { enviromentConfig } from '../../config'
+import openAPIJSON from './open-api.json'
 import { setupRoutes } from './routes'
 
-import dotenv from 'dotenv'
 export const envs = dotenv.config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
 })
@@ -19,6 +22,10 @@ if (shouldLogRequests) {
   morganBody(app, {
     maxBodyLength: 1000000,
   })
+}
+
+if (enviromentConfig.isDevOrTestEnviroment()) {
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openAPIJSON))
 }
 
 setupRoutes(app)

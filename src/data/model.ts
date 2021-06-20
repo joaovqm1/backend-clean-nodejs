@@ -1,5 +1,5 @@
 export interface BaseModel {
-  id?: number
+  id: number
   officeId?: number
   createrId?: number
   updaterId?: number

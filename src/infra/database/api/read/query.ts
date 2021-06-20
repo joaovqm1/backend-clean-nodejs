@@ -1,8 +1,12 @@
 /* eslint-disable max-lines */
-import { Filter, StringUtilities } from '@/data'
 import { Op } from 'sequelize'
+
+import { StringUtilities } from '@/data'
+import { Filter } from '@/domain'
+
 import { ModelFactoryImpl } from '../../model-factory'
 import { SequelizeSchema } from '../../utilities'
+import { QueryCreater } from './definition'
 interface IncludesFromForeingField {
   model: any
   field: string
@@ -30,19 +34,19 @@ interface Params {
   modelFactory: ModelFactoryImpl
   stringUtilities: StringUtilities
   currentUser?: any
-  userId?: number
+  officeId?: number
   isPublicTable: boolean
   isHybridTable: boolean
   officeIdFieldToQuery?: string
 }
 
-export class QueryCreater {
+export class QueryCreaterImpl implements QueryCreater {
   private readonly modelName: string
   private readonly sequelizeModel: any
   private readonly sequelizeSchema: SequelizeSchema
   private readonly modelFactory: ModelFactoryImpl
   private readonly stringUtilities: StringUtilities
-  private readonly userOfficeId?: number
+  private readonly officeId?: number
   private readonly isPublicTable: boolean = false
   private readonly isHybridTable: boolean = false
   private readonly officeIdFieldToQuery: string = 'officeId'
@@ -53,7 +57,7 @@ export class QueryCreater {
     this.sequelizeSchema = params.sequelizeSchema
     this.modelFactory = params.modelFactory
     this.stringUtilities = params.stringUtilities
-    this.userOfficeId = params.userId
+    this.officeId = params.officeId
     this.isPublicTable = params.isPublicTable
     this.isHybridTable = params.isHybridTable
 
@@ -82,6 +86,9 @@ export class QueryCreater {
         case 'equalTo':
           fieldFilters.push(this.createEqualTo(filter))
           break
+        case 'containedIn':
+          fieldFilters.push(this.createContainedIn(filter))
+          break
         case 'greaterThan':
           fieldFilters.push(this.createGreaterThan(filter))
           break
@@ -107,6 +114,7 @@ export class QueryCreater {
           query.include = this.getIncludes(filter.fields)
           break
         case 'exists':
+          fieldFilters.push(this.createExists())
           break
       }
 
@@ -140,7 +148,7 @@ export class QueryCreater {
   getOfficeClausure(): any {
     return {
       [this.officeIdFieldToQuery]: {
-        [Op.eq]: this.userOfficeId
+        [Op.eq]: this.officeId
       }
     }
   }
@@ -160,13 +168,17 @@ export class QueryCreater {
 
   getOfficeOrClausureForHybridTables(): any {
     return [
-      { officeId: this.userOfficeId },
+      { officeId: this.officeId },
       { officeId: null },
     ]
   }
 
   createEqualTo(filter: Filter): any {
     return { [Op.eq]: filter.value }
+  }
+
+  createContainedIn(filter: Filter): any {
+    return { [Op.in]: filter.values }
   }
 
   createGreaterThan(filter: Filter): any {
@@ -192,6 +204,10 @@ export class QueryCreater {
 
   createLessThanOrEqualTo(filter: Filter): any {
     return this.createFilterAccordingToOperatorAndTypeOfValue(Op.lte, filter.value)
+  }
+
+  createExists(): any {
+    return { [Op.not]: null }
   }
 
   createSelectAndIncludes(filter: Filter): any {
@@ -316,8 +332,8 @@ export class QueryCreater {
 
       const associatatedModel = this.getAssociatedModel(foreignField, model)
 
-      const fieldNotInclude = includes.find(filter => filter.model === associatatedModel) === undefined
-      if (fieldNotInclude) {
+      const fieldNotIncluded = includes.find(filter => filter.model === associatatedModel) === undefined
+      if (fieldNotIncluded) {
         const include = this.getIncludesFromModelAccordingToField({
           field: foreignField,
           model: associatatedModel,
@@ -335,6 +351,7 @@ export class QueryCreater {
     const { model, field: foreingField, associatedFields } = params
 
     let attributesToSelect = this.filterFieldsWithOnlyOneDotAndRemoveForeingFieldFromEachField(associatedFields, foreingField)
+
     if (attributesToSelect.length === 0) {
       attributesToSelect = this.getModelFields(model)
     }
@@ -372,6 +389,7 @@ export class QueryCreater {
       return this.modelFactory.get(associationName)
     } catch (error) {
       const modelProperties: any = this.sequelizeSchema.getModelProperties(modelWhichAssociates)
+      // eslint-disable-next-line security/detect-object-injection
       const foreingModelName: string = modelProperties[associationName].$ref
         .replace('#/definitions/', '')
         .trim()

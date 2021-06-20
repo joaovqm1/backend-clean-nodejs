@@ -1,16 +1,12 @@
 'use strict'
 
-const { INTEGER, STRING, JSON, DATE } = require('sequelize')
+const { INTEGER, STRING, DATE } = require('sequelize')
+const { id, stateId, cityId, createdAt, updatedAt, deletedAt } = require('../utilities/default-fields')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const table = await queryInterface.createTable('offices', {
-      id: {
-        type: INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-      },
+      id,
       email: {
         type: STRING,
         allowNull: false
@@ -45,8 +41,8 @@ module.exports = {
         type: INTEGER,
         allowNull: false,
         references: {
-          model: "plans",
-          key: "id"
+          model: 'plans',
+          key: 'id'
         }
       },
       postcode: {
@@ -55,44 +51,22 @@ module.exports = {
       address: {
         type: STRING
       },
-      stateId: {
-        type: INTEGER,
-        allowNull: false,
-        references: {
-          model: "plans",
-          key: "id"
-        }
-      },
-      cityId: {
-        type: INTEGER,
-        allowNull: false,
-        references: {
-          model: "cities",
-          key: "id"
-        }
-      },
+      stateId,
+      cityId,
       neighborhood: {
         type: STRING
       },
       addressNumber: {
         type: STRING
       },
-      createdAt: {
-        type: DATE,
-        allowNull: true
-      },
-      updatedAt: {
-        type: DATE,
-        allowNull: true
-      },
-      deletedAt: {
-        type: DATE
-      }
+      createdAt,
+      updatedAt,
+      deletedAt
     }, {
       uniqueKeys: {
         unique_name_cnpj: {
           customIndex: true,
-          fields: ["name", "cnpj"]
+          fields: ['name', 'cnpj']
         }
       }
     })

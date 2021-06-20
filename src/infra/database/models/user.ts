@@ -1,25 +1,21 @@
-import { sequelize } from '@/infra/database/sequelize'
-import { Model, INTEGER, STRING, BOOLEAN, DOUBLE } from 'sequelize'
+import { BOOLEAN, DOUBLE, INTEGER, Model, STRING } from 'sequelize'
 
+import { sequelize } from '@/infra/database/sequelize'
 import {
-  createrIdSchema,
   createrIdForeignKeyOptions,
-  updaterIdSchema,
-  updaterIdForeignKeyOptions,
+  createrIdSchema,
   getForeignKeyOptions,
+  idSchema,
+  updaterIdForeignKeyOptions,
+  updaterIdSchema,
 } from '@/infra/database/utilities'
+
 import Role from './role'
 
 class UserModel extends Model { }
-
 UserModel.init(
   {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
+    id: idSchema,
     username: {
       type: STRING,
       allowNull: false,
@@ -62,13 +58,13 @@ UserModel.init(
     roleId: {
       type: INTEGER,
       allowNull: false,
+      defaultValue: 2
     },
     birthdate: {
       type: STRING
     },
     cpf: {
-      type: STRING,
-      allowNull: false
+      type: STRING
     },
     createrId: {
       ...createrIdSchema,

@@ -1,23 +1,38 @@
-import { ControllerFactory } from '@/main/factories'
-
 import { Request, Response, Router } from 'express'
-import { UserControllerFacade } from '@/presentation/features/user/user-facade'
+
+import { routeRunner } from '../runner'
 
 export default (router: Router): void => {
   router.get('/users/login', async function(req: Request, res: Response) {
-    const controller: UserControllerFacade = await ControllerFactory.get({
+    return routeRunner({
       feature: 'users',
-      operation: 'READ',
+      operation: 'LOGIN',
+      queryOrBody: req.query,
+      req,
+      res,
+      useCase: { name: 'logIn' }
     })
+  })
 
-    const query = {
-      usernameOrEmail: req.query.usernameOrEmail as string,
-      password: req.query.password as string,
-    }
+  router.put('/users/password/email', async function(req: Request, res: Response) {
+    return routeRunner({
+      feature: 'users',
+      operation: 'RECOVER-PASSWORD',
+      queryOrBody: req.body.data,
+      req,
+      res,
+      useCase: { name: 'sendPasswordRecoveryEmail', function: 'send' }
+    })
+  })
 
-    const httpResponse = await controller.logIn().handle(query)
-    res.status(httpResponse.statusCode).json({
-      data: httpResponse.data,
+  router.put('/users/password/change', async function(req: Request, res: Response) {
+    return routeRunner({
+      feature: 'users',
+      operation: 'CHANGE-PASSWORD',
+      queryOrBody: req.body.data,
+      req,
+      res,
+      useCase: { name: 'changePassword', function: 'change' }
     })
   })
 }

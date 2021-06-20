@@ -52,7 +52,7 @@ describe('Data - Login/User Mapper', function() {
 
     const createUserRequest: CreateUserRequestDTO = {
       ...request,
-      role: { id: 1 },
+      role: { id: 2 },
       token: 'random string'
     }
 
@@ -82,7 +82,7 @@ describe('Data - Login/User Mapper', function() {
     expect(userMapper.fromUpdateRequestDTOToModel(request)).toEqual(model)
   })
 
-  it('Should return read one user response when is passed a user model with owner permission', function() {
+  it('Should return read one user response when is passed a user model with admin permission', function() {
     const model: UserModel = {
       id: 1,
       token: 'token',
@@ -91,7 +91,7 @@ describe('Data - Login/User Mapper', function() {
       roleId: 1,
       role: {
         id: 1,
-        name: Roles.OWNER
+        name: Roles.ADMIN
       },
       name: 'user',
       email: 'user@email.com',
@@ -103,7 +103,7 @@ describe('Data - Login/User Mapper', function() {
       id: model.id,
       role: {
         id: model.roleId,
-        name: Roles.OWNER
+        name: Roles.ADMIN
       }
     }
 

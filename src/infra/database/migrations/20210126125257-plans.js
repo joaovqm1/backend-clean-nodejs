@@ -19,7 +19,7 @@ module.exports = {
       uniqueKeys: {
         unique_name: {
           customIndex: true,
-          fields: ["name"]
+          fields: ['name']
         }
       }
     })

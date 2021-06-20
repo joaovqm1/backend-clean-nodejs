@@ -1,4 +1,15 @@
 #!/bin/sh
 . "$(dirname $0)/_/husky.sh"
 
+branch=`git rev-parse --abbrev-ref HEAD`
+protected_branches="^(master|develop|production|staging)"
+
+if [[ "$branch" =~ $protected_branches ]]
+then
+  echo -e "Como você está no $branch, que é um branch protegido, antes de fazer um push será feito um build, lint e uma verificação de dependências"
+  yarn build 
+  yarn verify-dependencies-violations
+fi
+
+
 yarn lint

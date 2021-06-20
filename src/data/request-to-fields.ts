@@ -17,6 +17,7 @@ export function fromAnyReadRequestToReadRequestDTO(params: Params): ReadCrudRequ
     const newFilter = {
       equalTo: {}
     }
+    // eslint-disable-next-line security/detect-object-injection
     newFilter.equalTo[field] = params.request[field]
     readRequest.filters.push(newFilter)
   }

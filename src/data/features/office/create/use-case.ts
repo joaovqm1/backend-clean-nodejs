@@ -1,17 +1,18 @@
-import { DeleteCrudRepository } from '@/data/features/crud/delete/repository'
-import {
-  CreateUserForOfficeUseCase,
-  CreateUserForOfficeRequestDTO,
-  CreateUserForOfficeResponseDTO,
-  OfficeEntity,
-} from '@/domain/features/office'
 import { CreateCrudRepository } from '@/data/features/crud'
+import { DeleteCrudRepository } from '@/data/features/crud/delete/repository'
 import { AfterCreateCrudUseCase, CreateCrudUseCase } from '@/domain/features'
-import { OfficeModelMapper } from '../mapper'
 import {
   CreateOfficeRequestDTO,
   CreateOfficeResponseDTO,
 } from '@/domain/features/'
+import {
+  CreateUserForOfficeRequestDTO,
+  CreateUserForOfficeResponseDTO,
+  CreateUserForOfficeUseCase,
+  OfficeEntity,
+} from '@/domain/features/office'
+
+import { OfficeModelMapper } from '../mapper'
 import { OfficeModel } from '../model'
 
 interface Params {
@@ -22,9 +23,7 @@ interface Params {
   afterCreateUseCase: AfterCreateCrudUseCase<OfficeEntity>
 }
 
-export class CreateOfficeUseCaseImpl
-implements
-  CreateCrudUseCase<CreateOfficeRequestDTO, CreateOfficeResponseDTO> {
+export class CreateOfficeUseCaseImpl implements CreateCrudUseCase<CreateOfficeRequestDTO, CreateOfficeResponseDTO> {
   private readonly createRepository: CreateCrudRepository
   private readonly deleteRepository: DeleteCrudRepository
   private readonly modelMapper: OfficeModelMapper
@@ -42,25 +41,21 @@ implements
   async create(
     request: CreateOfficeRequestDTO
   ): Promise<CreateOfficeResponseDTO> {
-    const objectModel: any = this.modelMapper.fromCreateRequestDTOToModel(
-      request
-    )
+    const model: any = this.modelMapper.fromCreateRequestDTOToModel(request)
 
-    const newOffice: OfficeModel = await this.createRepository.create(
-      objectModel
-    )
+    const createdOffice: OfficeModel = await this.createRepository.create(model)
 
     try {
-      const fetchedOffice: OfficeEntity = await this.afterCreateUseCase.fetchAfterCreation(
-        newOffice.id
-      )
+      const fetchedOffice: OfficeEntity = await this.afterCreateUseCase.fetchAfterCreation(createdOffice.id)
+
+      const user = await this.createUserForOffice(request, createdOffice)
 
       return {
         ...fetchedOffice,
-        user: await this.createUserForOffice(request, newOffice),
+        user
       }
     } catch (error) {
-      await this.deleteRepository.delete(newOffice.id)
+      await this.deleteRepository.delete(createdOffice.id)
       throw error
     }
   }
@@ -75,7 +70,7 @@ implements
       cpf: request.cpf,
       username: request.user.username,
       password: request.user.password,
-      name: request.owner || request.name,
+      name: request.owner,
     }
 
     return await this.createUserUseCase.create(newUser)

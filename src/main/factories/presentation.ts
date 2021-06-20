@@ -1,25 +1,39 @@
-import { EntityNotFoundError, RequestNoAuthenticatedError } from '@/domain'
-
 import { accessController, FilterBuilder } from '@/data'
-import { Filter } from '@/data/contracts'
-
+import { EntityNotFoundError, Filter, RequestNoAuthenticatedError } from '@/domain'
+import User from '@/infra/database/models/user'
+import { ReadApi } from '@/infra/repositories/contracts'
 import { DBFactory } from '@/main/factories/infra/db'
 
-import { ReadApi } from '@/infra/repositories/contracts'
-import User from '@/infra/database/models/user'
-
-import { RequestParams } from './request-params'
 import {
+  BankFactory,
+  CityFactory,
+  CustomerSupplierFactory,
+  DocumentFactory,
+  FinanceFactory,
+  FinanceMethodFactory,
+  FinanceTypeFactory,
   OfficeFactory,
-  UserFactory,
+  PhasesFactory,
+  ProjectFactory,
+  ProjectPhaseFactory,
+  ProjectScopeFactory,
+  ProjectStatusFactory,
+  ProjectTypeFactory,
+  ScopeFactory,
   StateFactory,
-  CityFactory
+  TaskFactory,
+  UserFactory
 } from './features'
+import { RequestParams } from './request-params'
 export class ControllerFactory {
   // eslint-disable-next-line max-lines-per-function
   static async get(requestParams: RequestParams): Promise<any> {
     if (requestParams.token) {
-      requestParams.userId = await validateUserAccessAndReturnItsId(requestParams)
+      const user = await getUserByToken(requestParams.token)
+      requestParams.userId = user.id
+      validateAccess({ ...requestParams, user })
+    } else {
+      validateAccess(requestParams)
     }
 
     switch (requestParams.feature.toUpperCase()) {
@@ -35,6 +49,16 @@ export class ControllerFactory {
         const controllerFactory = ControllerFactory.getUser(requestParams)
         return controllerFactory.getControllerFacade()
       }
+      case 'DOCUMENTS': {
+        const controllerFactory = new DocumentFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'CUSTOMERS':
+      case 'SUPPLIERS':
+      case 'CUSTOMERSSUPPLIERS': {
+        const customerSupplierFactory = new CustomerSupplierFactory(requestParams)
+        return customerSupplierFactory.getControllerFacade()
+      }
       case 'STATES': {
         const controllerFactory = new StateFactory(requestParams)
         return controllerFactory.getControllerFacade()
@@ -42,6 +66,73 @@ export class ControllerFactory {
       case 'CITIES': {
         const controllerFactory = new CityFactory(requestParams)
         return controllerFactory.getControllerFacade()
+      }
+      case 'FINANCEMETHODS': {
+        const controllerFactory = new FinanceMethodFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'PHASES': {
+        const controllerFactory = new PhasesFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'SCOPES': {
+        const controllerFactory = new ScopeFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'PROJECTSSTATUS': {
+        const controllerFactory = new ProjectStatusFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'PROJECTSPHASES': {
+        const phaseFactory = new PhasesFactory(requestParams)
+        const controllerFactory = new ProjectPhaseFactory({
+          requestParams,
+          readPhasesUseCase: phaseFactory.getReadCrudUseCase()
+        })
+        return controllerFactory.getControllerFacade()
+      }
+      case 'PROJECTTYPES': {
+        const controllerFactory = new ProjectTypeFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'FINANCETYPES': {
+        const controllerFactory = new FinanceTypeFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'TASKS': {
+        const controllerFactory = new TaskFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'BANKS': {
+        const controllerFactory = new BankFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'INCOMES':
+      case 'EXPENSES': {
+        const controllerFactory = new FinanceFactory(requestParams)
+        return controllerFactory.getControllerFacade()
+      }
+      case 'PROJECTS': {
+        const financeFactory = new FinanceFactory(requestParams)
+        const scopeFactory = new ScopeFactory(requestParams)
+        const phaseFactory = new PhasesFactory(requestParams)
+        const projectScopeFactory = new ProjectScopeFactory({
+          requestParams,
+          readScopesUseCase: scopeFactory.getReadCrudUseCase()
+        })
+        const projectPhaseFactory = new ProjectPhaseFactory({
+          requestParams,
+          readPhasesUseCase: phaseFactory.getReadCrudUseCase()
+        })
+        const projectFactory = new ProjectFactory({
+          requestParams,
+          createFinancesForProjectUseCase: financeFactory.getCreateFinanceForProjectUseCase(),
+          updateFinancesForProjectUseCase: financeFactory.getUpdateFinanceForProjectUseCase(),
+          createProjectPhasesForProjectUseCase: projectPhaseFactory.getCreateProjectPhasesForProject(),
+          createProjectScopesForProjectUseCase: projectScopeFactory.getCreateProjectScopesForProject(),
+          updateProjectScopesForProjectUseCase: projectScopeFactory.getUpdateProjectScopesForProject()
+        })
+        return projectFactory.getControllerFacade()
       }
       default:
         throw new EntityNotFoundError(`Não foi possível encontrar a entidade ${requestParams.feature}`)
@@ -60,16 +151,6 @@ export class ControllerFactory {
   }
 }
 
-async function validateUserAccessAndReturnItsId(params: RequestParams): Promise<number> {
-  const user = await getUserByToken(params.token)
-  if (!user && shouldThrownErrorIfUserNotFound(params)) {
-    throw new RequestNoAuthenticatedError()
-  } else {
-    accessController.check({ ...params, user })
-    return user.id
-  }
-}
-
 async function getUserByToken(token: string): Promise<any> {
   const readApi: ReadApi = DBFactory.getReadApi({ modelName: 'user', sequelizeModel: User })
 
@@ -81,12 +162,10 @@ async function getUserByToken(token: string): Promise<any> {
   return readApi.get(filters)
 }
 
-function shouldThrownErrorIfUserNotFound(params: RequestParams): boolean {
-  switch (params.feature.toUpperCase()) {
-    case 'STATES':
-    case 'CITIES':
-      return params.operation.toUpperCase() !== 'READ'
-    default:
-      return true
+function validateAccess(params: RequestParams & { user?: any }): void {
+  if (!accessController.isOperationAllowed(params)) {
+    throw new RequestNoAuthenticatedError()
   }
 }
+
+

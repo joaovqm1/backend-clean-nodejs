@@ -1,10 +1,9 @@
 import sinon from 'sinon'
 
-import { CreateUserRequestDTO, ReadUserResponseDTO } from '@/domain'
+import { AfterCreateCrudUseCase, CreateUserRequestDTO, ReadUserResponseDTO } from '@/domain'
 import {
   UserModelMapper,
   CreateCrudUseCaseImpl,
-  ReadUserUseCaseImpl,
   UserModel
 } from '@/data/features'
 import { CreateCrudRepositoryImpl } from '@/infra'
@@ -12,14 +11,14 @@ import { CreateCrudRepositoryImpl } from '@/infra'
 describe('Data - Create CRUD Use Case', function() {
   const createRepository = new CreateCrudRepositoryImpl(undefined)
   const userMapper = new UserModelMapper(undefined)
-  const readUserUseCase = new ReadUserUseCaseImpl({
-    readCrudUseCase: undefined
-  })
+  const mockAfterCreate: AfterCreateCrudUseCase<any> = {
+    fetchAfterCreation: jest.fn()
+  }
 
   const createCrudUseCase = new CreateCrudUseCaseImpl({
     repository: createRepository,
     modelMapper: userMapper,
-    afterCreateUseCase: readUserUseCase
+    afterCreateUseCase: mockAfterCreate
   })
 
   it('Should return new object when passed a valid request to create it', async function() {
@@ -58,7 +57,7 @@ describe('Data - Create CRUD Use Case', function() {
       .withArgs(objectModel)
       .resolves(newUser)
 
-    sinon.stub(readUserUseCase, 'fetchAfterCreation')
+    sinon.stub(mockAfterCreate, 'fetchAfterCreation')
       .withArgs(newUser.id)
       .resolves(newUser)
 

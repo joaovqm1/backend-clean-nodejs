@@ -1,9 +1,9 @@
-import { OfficeEntity } from '../../office-user/office-entity'
 import {
   AfterCreateCrudUseCase,
   AfterUpdateCrudUseCase,
   ReadCrudUseCase,
 } from '../../crud'
+import { OfficeEntity } from '../../office-user/office-entity'
 import { ReadOfficeResponseDTO } from './response-dto'
 
 export interface ReadOfficeUseCase

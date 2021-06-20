@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-require */
 import { FileUtilities, StringUtilities } from '@/data/contracts'
 import { ModelNotFoundError } from '@/domain'
 
@@ -20,7 +21,7 @@ export class ModelFactoryImpl {
   getByFileSimilarity(modelName: string): any {
     const files = this.fileUtilities.getFilesFromDir(`${__dirname}/models`)
     for (const file of files) {
-      const filename = file.replace('.ts', '')
+      const filename = file.replace('.ts', '').replace('.js', '')
       if (this.stringUtilities.stringsAreSimilar(filename, modelName, 0.75)) {
         return this.get(filename)
       }

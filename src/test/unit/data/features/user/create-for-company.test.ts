@@ -1,21 +1,20 @@
 import sinon from 'sinon'
 
-import { CreateUserForOfficeRequestDTO, CreateUserRequestDTO, CreateUserResponseDTO } from '@/domain'
+import { AfterCreateCrudUseCase, CreateUserForOfficeRequestDTO, CreateUserRequestDTO, CreateUserResponseDTO } from '@/domain'
 import {
   UserModelMapper,
-  ReadUserUseCaseImpl,
   CreateUserForOfficeUseCaseImpl,
   CreateCrudUseCaseImpl,
   UserModel
 } from '@/data/features'
 import { CreateCrudRepositoryImpl } from '@/infra'
-import { userEntity } from '@/test/utilities/mocks'
+import { mockUserEntity } from '@/test/utilities/mocks'
 
 describe('Data - Create User for Office Use Case', function() {
   const userMapper = new UserModelMapper(undefined)
-  const readUserUseCase = new ReadUserUseCaseImpl({
-    readCrudUseCase: undefined
-  })
+  const mockAfterCreate: AfterCreateCrudUseCase<any> = {
+    fetchAfterCreation: jest.fn()
+  }
   const createRepository = new CreateCrudRepositoryImpl({
     create: undefined
   })
@@ -37,7 +36,7 @@ describe('Data - Create User for Office Use Case', function() {
       email: 'user@email.com',
       username: 'dev',
       password: 'dev',
-      role: { id: 9 }
+      role: { id: 2 }
     }
     const request: CreateUserForOfficeRequestDTO = {
       officeId: 1,
@@ -52,11 +51,11 @@ describe('Data - Create User for Office Use Case', function() {
       token: 'token',
       officeId: 1,
       cpf: '11111111111',
-      role: { id: 9 },
+      role: { id: 2 },
       name: 'user',
       email: 'user@email.com',
       username: 'dev',
-      roleId: 9
+      roleId: 2
     }
 
     sinon.stub(userMapper, 'fromCreateUserForOfficeRequestToCreateUserRequest')
@@ -69,17 +68,17 @@ describe('Data - Create User for Office Use Case', function() {
 
     sinon.stub(createRepository, 'create')
       .withArgs(objectModel)
-      .resolves(userEntity)
+      .resolves(mockUserEntity)
 
-    sinon.stub(readUserUseCase, 'fetchAfterCreation')
-      .withArgs(userEntity.id)
-      .resolves(userEntity)
+    sinon.stub(mockAfterCreate, 'fetchAfterCreation')
+      .withArgs(mockUserEntity.id)
+      .resolves(mockUserEntity)
 
     sinon.stub(createCrudUseCase, 'create')
       .withArgs(createUserRequest)
-      .resolves(userEntity)
+      .resolves(mockUserEntity)
 
-    expect(await createUserForOfficeUseCase.create(request)).toEqual(userEntity)
+    expect(await createUserForOfficeUseCase.create(request)).toEqual(mockUserEntity)
   })
 })
 

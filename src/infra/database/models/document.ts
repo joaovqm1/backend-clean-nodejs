@@ -1,50 +1,74 @@
-import { Model, INTEGER, STRING, DATEONLY } from 'sequelize'
+import AWS from 'aws-sdk'
+import { DOUBLE, INTEGER, Model, STRING } from 'sequelize'
 
+import { storageConfig } from '@/config/index'
+import { sequelize } from '@/infra/database/sequelize'
 import {
-  sequelize,
-  User,
   createrIdForeignKeyOptions,
-  updaterIdForeignKeyOptions,
   defaultFieldsSchema,
-} from '@/infra'
+  idSchema,
+  updaterIdForeignKeyOptions,
+} from '@/infra/database/utilities'
+import logger from '@/logger'
+
+import { User } from './user'
 
 class DocumentModel extends Model { }
 
 DocumentModel.init(
   {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
+    id: idSchema,
+    description: {
+      type: STRING,
+      allowNull: false
     },
     name: {
       type: STRING,
       allowNull: false,
     },
-    status: {
+    path: {
       type: STRING,
-      allowNull: false,
+      allowNull: false
     },
-    description: {
+    key: {
+      type: STRING,
+      allowNull: false
+    },
+    extension: {
+      type: STRING,
+      allowNull: false
+    },
+    mimeType: {
       type: STRING,
     },
-    dueDate: {
-      type: DATEONLY,
+    size: {
+      type: DOUBLE,
+    },
+    projectId: {
+      type: INTEGER,
+    },
+    projectScopeId: {
+      type: INTEGER,
+    },
+    projectPhaseId: {
+      type: INTEGER,
     },
     ...defaultFieldsSchema,
   },
   {
     sequelize,
     tableName: 'documents',
-    paranoid: true,
     name: {
       singular: 'document',
       plural: 'documents',
     },
     indexes: [
       {
-        fields: ['name', 'officeId'],
+        fields: ['description', 'officeId'],
+        unique: true
+      },
+      {
+        fields: ['key', 'officeId'],
         unique: true
       },
     ],
@@ -53,6 +77,24 @@ DocumentModel.init(
 
 DocumentModel.belongsTo(User, createrIdForeignKeyOptions)
 DocumentModel.belongsTo(User, updaterIdForeignKeyOptions)
+
+DocumentModel.afterDestroy(async function(document: any) {
+  try {
+    const s3 = new AWS.S3()
+
+    const params = {
+      Bucket: storageConfig.awsS3BucketName,
+      Key: document.dataValues.key
+    }
+
+    s3.deleteObject(params, function(_error, result) {
+      return result
+    })
+  } catch (error) {
+    logger.error(error)
+  }
+})
+
 
 export const Document = DocumentModel
 export default DocumentModel

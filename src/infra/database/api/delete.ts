@@ -1,12 +1,13 @@
-import { ErrorHandler } from '../error-handler'
-import { DeleteApi } from '@/infra/repositories/contracts'
 import { sequelize } from '@/infra/database/sequelize'
+import { DeleteApi } from '@/infra/repositories/contracts'
+
+import { ErrorHandler } from '../error-handler'
 
 export class DeleteApiImpl implements DeleteApi {
   constructor(
     private readonly sequelizeModel: any,
     private readonly errorHandler: ErrorHandler
-  ) {}
+  ) { }
 
   async deleteMany(ids: number[]): Promise<any> {
     try {

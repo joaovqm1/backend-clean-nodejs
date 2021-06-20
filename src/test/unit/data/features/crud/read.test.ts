@@ -1,23 +1,33 @@
 import sinon from 'sinon'
+import faker from 'faker'
 
-import { UserEntity, ReadCrudRequestDTO } from '@/domain'
-import { UserModelMapper, ReadCrudUseCaseImpl, Filter } from '@/data'
-import { ReadCrudRepositoryImpl } from '@/infra'
-import { FilterTransformerImpl } from '@/utilities'
+import { ReadCrudRequestDTO, Filter } from '@/domain'
+import { ReadCrudUseCaseImpl, FilterBuilder, BaseModelMapper, ReadCrudRepository } from '@/data'
+import { mockFiltersWithId } from '@/test/unit/presentation/mocks'
 
 afterEach(function() {
   sinon.restore()
 })
 
-describe('Data - Read CRUD Use Case', function() {
-  const readRepository = new ReadCrudRepositoryImpl(undefined)
-  const filterTransformer = new FilterTransformerImpl()
-  const userMapper = new UserModelMapper(undefined)
+describe('Read CRUD Use Case', function() {
+  const mockRepoistory: ReadCrudRepository = {
+    getMany: jest.fn(),
+    getOne: jest.fn()
+  }
 
-  const readUserCrudUseCase = new ReadCrudUseCaseImpl<UserEntity>({
-    repository: readRepository,
-    filterTransformer,
-    modelMapper: userMapper
+  const mockMapper: BaseModelMapper = {
+    fromModelToReadManyResponse: jest.fn(),
+    fromModelToReadOneResponse: jest.fn(),
+    fromCreateRequestDTOToModel: jest.fn(),
+    fromUpdateRequestDTOToModel: jest.fn(),
+  }
+
+  const mockDefaultGetManyFilters = mockFiltersWithId
+
+  const readUserCrudUseCase = new ReadCrudUseCaseImpl<any>({
+    repository: mockRepoistory,
+    modelMapper: mockMapper,
+    defaultGetManyFilters: mockDefaultGetManyFilters
   })
 
   it('Should return new object when passed a valid request to get it', async function() {
@@ -37,38 +47,28 @@ describe('Data - Read CRUD Use Case', function() {
       roleId: 9
     }
 
-    sinon.stub(filterTransformer, 'transformQueryToFilters')
-      .withArgs(query)
-      .returns(filters)
-
-    sinon.stub(readRepository, 'getOne')
+    sinon.stub(mockRepoistory, 'getOne')
       .withArgs(filters)
       .resolves(objectReturn)
 
-    sinon.stub(userMapper, 'fromModelToReadOneResponse')
+    sinon.stub(mockMapper, 'fromModelToReadOneResponse')
       .withArgs(objectReturn)
       .returns(objectReturn)
 
-    expect(await readUserCrudUseCase.getOne(query)).toEqual(objectReturn)
+    expect(await readUserCrudUseCase.getOne(filters)).toEqual(objectReturn)
   })
 
-  it('Should throw error when try to get object not found', async function() {
+  it('Should return undefined when object doesnt exist', async function() {
     const query: ReadCrudRequestDTO = {
       fieldsToSelect: ['id']
     }
     const filters: Filter[] = [{ name: 'filter', fields: query.fieldsToSelect }]
 
-    sinon.stub(filterTransformer, 'transformQueryToFilters')
-      .withArgs(query)
-      .returns(filters)
-
-    sinon.stub(readRepository, 'getOne')
+    sinon.stub(mockRepoistory, 'getOne')
       .withArgs(filters)
-      .resolves(false)
+      .resolves(undefined)
 
-    await expect(async function() { await readUserCrudUseCase.getOne(query) })
-      .rejects
-      .toThrow('Objeto não encontrado')
+    expect(await readUserCrudUseCase.getOne(filters)).toEqual(undefined)
   })
 
   it('Should return many object when passed a valid query to get them', async function() {
@@ -88,23 +88,37 @@ describe('Data - Read CRUD Use Case', function() {
       roleId: 9
     }]
 
-    sinon.stub(filterTransformer, 'transformQueryToFilters')
-      .withArgs(query)
-      .returns(filters)
-
-    sinon.stub(readRepository, 'getMany')
-      .withArgs(filters)
+    sinon.stub(mockRepoistory, 'getMany')
+      .withArgs(filters.concat(mockDefaultGetManyFilters))
       .resolves({
         items: objectReturn
       })
 
-    sinon.stub(userMapper, 'fromModelToReadManyResponse')
+    sinon.stub(mockMapper, 'fromModelToReadManyResponse')
       .withArgs(objectReturn)
       .returns(objectReturn)
 
-    expect(await readUserCrudUseCase.getMany(query)).toEqual({
+    expect(await readUserCrudUseCase.getMany(filters)).toEqual({
       items: objectReturn
     })
+  })
+
+  it('Should return object found by id', async function() {
+    // Arrange 
+    const mockId = faker.datatype.number()
+    const mockFilters = new FilterBuilder()
+      .equalTo('id', mockId)
+      .build()
+
+    const mockObject = {
+      id: mockId
+    }
+
+    sinon.stub(readUserCrudUseCase, 'getOne')
+      .withArgs(mockFilters)
+      .resolves(mockObject)
+
+    expect(await readUserCrudUseCase.getById(mockId)).toEqual(mockObject)
   })
 })
 

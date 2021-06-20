@@ -1,7 +1,8 @@
-import { sequelize } from '@/infra/database/sequelize'
-import { Model, INTEGER, STRING } from 'sequelize'
+import { INTEGER, Model, STRING } from 'sequelize'
 
-class StateModel extends Model {}
+import { sequelize } from '@/infra/database/sequelize'
+
+class StateModel extends Model { }
 
 StateModel.init(
   {

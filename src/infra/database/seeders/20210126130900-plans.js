@@ -1,6 +1,4 @@
-'use strict';
-
-const { UniqueConstraintError } = require('sequelize')
+'use strict'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -11,18 +9,13 @@ module.exports = {
           name: 'TRIAL'
         }, {
           id: 2,
-          name: 'SILVER'
-        }, {
-          id: 3,
-          name: 'GOLD'
-        },], {})
+          name: 'PAID'
+        }], {})
 
       return plans
     } catch (error) {
-      if (!(error instanceof UniqueConstraintError)) {
-        throw error
-      }
+      console.log(error)
     }
   },
   down: (queryInterface) => queryInterface.bulkDelete('plans', null, {}),
-};
+}

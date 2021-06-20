@@ -1,7 +1,7 @@
 import { BaseCrudViewModelMapper } from '@/presentation'
 import faker from 'faker'
 
-const phoneFormat = '(##) #####-####'
+export const phoneFormat = '(##) #####-####'
 export function formatedPhone(): string {
   return faker.phone.phoneNumber(phoneFormat)
 }
@@ -11,13 +11,13 @@ export function formatedIe(): string {
   return faker.phone.phoneNumber(ieFormat)
 }
 
-const zipCodeFormat = '##.###-###'
+export const zipCodeFormat = '##.###-###'
 export function formatedZipCode(): string {
   return faker.address.zipCode(zipCodeFormat)
 }
 
-export function removeSpecialCharactersFromString(string: string = ''): string {
-  return string.replace(/[/().-]+/g, '').replace(/\s/g, '')
+export function removeSpecialCharactersFromString(string: string): string {
+  return string?.replace(/[/().-]+/g, '').replace(/\s/g, '')
 }
 
 export class ViewModelMapper implements BaseCrudViewModelMapper {
@@ -40,7 +40,7 @@ export class ViewModelMapper implements BaseCrudViewModelMapper {
   }
 
   // read
-  fromReadRequestViewModelToReadRequestDTO(request: any): any {
+  fromReadRequestViewModelToFilters(request: any): any {
     return request
   }
 

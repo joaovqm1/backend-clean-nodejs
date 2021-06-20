@@ -2,16 +2,19 @@ import { } from '@/data'
 import {
   CreateApi,
   CreateImpl,
-  ErrorHandlerImpl,
-  SequelizeSchemaImpl,
-  ReadApiImpl,
-  ReadApi,
-  DeleteApiImpl,
   DeleteApi,
+  DeleteApiImpl,
+  ErrorHandlerImpl,
+  QueryCreaterImpl,
+  ReadApi,
+  ReadApiImpl,
+  SequelizeSchemaImpl,
+  SumApi,
+  SumApiImpl,
   UpdateApi,
   UpdateApiImpl,
-  QueryCreater,
 } from '@/infra'
+
 import { DataFactory } from '../data'
 import { UtilitiesFactory } from '../utilities'
 
@@ -41,6 +44,7 @@ export interface ReadCrudRepositoryParams {
   currentUser?: any
   officeIdFieldToQuery?: string
   userId?: number
+  officeId?: number
 }
 
 export interface DeleteCrudRepositoryParams {
@@ -76,15 +80,23 @@ export class DBFactory {
     })
   }
 
-  static getQueryCreator(params: ReadCrudRepositoryParams): QueryCreater {
-    return new QueryCreater({
+  static getSumApi(params: ReadCrudRepositoryParams): SumApi {
+    return new SumApiImpl({
+      sequelizeModel: params.sequelizeModel,
+      queryCreater: this.getQueryCreator(params)
+    })
+  }
+
+
+  static getQueryCreator(params: ReadCrudRepositoryParams): QueryCreaterImpl {
+    return new QueryCreaterImpl({
       modelName: params.modelName,
       sequelizeModel: params.sequelizeModel,
       sequelizeSchema: sequelizeSchemaImpl,
       modelFactory: DataFactory.getModelFactory(),
       stringUtilities: UtilitiesFactory.getString(),
       currentUser: params.currentUser,
-      userId: params.userId,
+      officeId: params.officeId,
       isPublicTable: params.isPublicTable,
       isHybridTable: params.isHybridTable,
       officeIdFieldToQuery: params.officeIdFieldToQuery

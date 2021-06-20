@@ -1,7 +1,8 @@
 import { Model } from 'sequelize'
 
-import { ErrorHandler } from '../error-handler'
 import { CreateApi } from '@/infra/repositories/contracts'
+
+import { ErrorHandler } from '../error-handler'
 
 interface Params {
   modelName: string

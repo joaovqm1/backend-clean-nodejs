@@ -1,9 +1,10 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
+
 import {
+  DeleteParams,
+  GetParams,
   HttpRequest,
   PostPutParams,
-  GetParams,
-  DeleteParams,
 } from '@/data/contracts'
 
 export class HttpRequestImpl implements HttpRequest {

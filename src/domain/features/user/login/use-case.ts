@@ -1,4 +1,4 @@
-import { UserEntity, OfficeEntity } from '@/domain/features/office-user'
+import { OfficeEntity,UserEntity } from '@/domain/features/office-user'
 export interface LogInRequestDTO {
   usernameOrEmail: string
   password: string

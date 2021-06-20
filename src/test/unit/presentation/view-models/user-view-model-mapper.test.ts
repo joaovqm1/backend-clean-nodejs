@@ -3,17 +3,18 @@ import faker from 'faker'
 import {
   CreateUserRequestViewModel, CreateUserResponseViewModel, ReadUserResponseViewModel, UserViewModelMapper, ReadUserRequestViewModel, UpdateUserRequestViewModel, UpdateUserResponseViewModel
 } from '@/presentation'
-import { CreateUserRequestDTO, CreateUserResponseDTO, ReadCrudRequestDTO, ReadUserResponseDTO, UpdateUserRequestDTO, UpdateUserResponseDTO, UserEntity } from '@/domain'
+import { CreateUserRequestDTO, CreateUserResponseDTO, Filter, ReadCrudRequestDTO, ReadUserResponseDTO, UpdateUserRequestDTO, UpdateUserResponseDTO, UserEntity, userFieldsToInclude } from '@/domain'
 import { stringUtilities } from '@/main'
+import { mockFiltersWithId } from '../mocks'
 
 describe('User View Model Mapper', function() {
-  const userViewModelMapper = new UserViewModelMapper(stringUtilities)
+  const viewModelMapper = new UserViewModelMapper(stringUtilities)
   const userEntity: UserEntity = {
     id: 1,
     token: 'token',
     cpf: '11111111111',
     role: {
-      id: faker.random.number()
+      id: faker.datatype.number()
     },
     email: faker.internet.email(),
     name: faker.name.findName(),
@@ -34,7 +35,7 @@ describe('User View Model Mapper', function() {
         name: requestViewModel.name.toUpperCase()
       }
 
-      const receivedRequestDTO = userViewModelMapper.fromCreateRequestViewModelToCreateRequestDTO(requestViewModel)
+      const receivedRequestDTO = viewModelMapper.fromCreateRequestViewModelToCreateRequestDTO(requestViewModel)
       expect(expectedRequestDTO).toEqual(receivedRequestDTO)
     })
 
@@ -47,7 +48,7 @@ describe('User View Model Mapper', function() {
         ...userEntity
       }
 
-      const receivedCreateResponseViewModel = userViewModelMapper.fromCreateResponseDTOToCreateResponseViewModel(responseDTO)
+      const receivedCreateResponseViewModel = viewModelMapper.fromCreateResponseDTOToCreateResponseViewModel(responseDTO)
       expect(expectedResponseViewModel).toEqual(receivedCreateResponseViewModel)
     })
   })
@@ -57,7 +58,7 @@ describe('User View Model Mapper', function() {
       const responseDTO: ReadUserResponseDTO = userEntity
       const expectedResponseViewModel: ReadUserResponseViewModel = responseDTO
 
-      const receivedResponseViewModel = userViewModelMapper.fromReadOneResponseDTOToReadResponseOneViewModel(responseDTO)
+      const receivedResponseViewModel = viewModelMapper.fromReadOneResponseDTOToReadResponseOneViewModel(responseDTO)
       expect(expectedResponseViewModel).toEqual(receivedResponseViewModel)
     })
 
@@ -65,7 +66,7 @@ describe('User View Model Mapper', function() {
       const responseDTO: ReadUserResponseDTO[] = [userEntity]
       const expectedResponseViewModel: ReadUserResponseViewModel[] = responseDTO
 
-      const receivedResponseViewModel = userViewModelMapper.fromReadManyResponseDTOToReadResponseOneViewModel(responseDTO)
+      const receivedResponseViewModel = viewModelMapper.fromReadManyResponseDTOToReadResponseOneViewModel(responseDTO)
       expect(expectedResponseViewModel).toEqual(receivedResponseViewModel)
     })
 
@@ -74,38 +75,9 @@ describe('User View Model Mapper', function() {
         id: 1
       }
 
-      const requestDTO: ReadCrudRequestDTO = userViewModelMapper.fromReadRequestViewModelToReadRequestDTO(requestViewModel)
-      expect(requestDTO.filters).toEqual([{
-        equalTo: {
-          id: 1
-        }
-      }])
-    })
+      const mockFilters: Filter[] = mockFiltersWithId.concat([{ name: 'include', fields: userFieldsToInclude }])
 
-    it('Should mapper read request view model, with email, to read request dto', async function() {
-      const requestViewModel: ReadUserRequestViewModel = {
-        email: 'email'
-      }
-
-      const requestDTO: ReadCrudRequestDTO = userViewModelMapper.fromReadRequestViewModelToReadRequestDTO(requestViewModel)
-      expect(requestDTO.filters).toEqual([{
-        equalTo: {
-          email: 'email'
-        }
-      }])
-    })
-
-    it('Should mapper read request view model, with username, to read request dto', async function() {
-      const requestViewModel: ReadUserRequestViewModel = {
-        username: 'username'
-      }
-
-      const requestDTO: ReadCrudRequestDTO = userViewModelMapper.fromReadRequestViewModelToReadRequestDTO(requestViewModel)
-      expect(requestDTO.filters).toEqual([{
-        equalTo: {
-          username: 'username'
-        }
-      }])
+      expect(viewModelMapper.fromReadRequestViewModelToFilters(requestViewModel)).toEqual(mockFilters)
     })
   })
 
@@ -122,7 +94,7 @@ describe('User View Model Mapper', function() {
         cpf: '11111111111'
       }
 
-      const receivedCreateRequestDTO = userViewModelMapper.fromUpdateRequestViewModelToUpdateRequestDTO(requestViewModel)
+      const receivedCreateRequestDTO = viewModelMapper.fromUpdateRequestViewModelToUpdateRequestDTO(requestViewModel)
       expect(expectedRequestDTO).toEqual(receivedCreateRequestDTO)
     })
 
@@ -130,7 +102,7 @@ describe('User View Model Mapper', function() {
       const responseDTO: UpdateUserResponseDTO = userEntity
       const expectedResponseViewModel: UpdateUserResponseViewModel = userEntity
 
-      const receivedResponseViewModel = userViewModelMapper.fromUpdateResponseDTOToUpdateResponseViewModel(responseDTO)
+      const receivedResponseViewModel = viewModelMapper.fromUpdateResponseDTOToUpdateResponseViewModel(responseDTO)
       expect(expectedResponseViewModel).toEqual(receivedResponseViewModel)
     })
   })

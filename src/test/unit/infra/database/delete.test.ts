@@ -24,6 +24,14 @@ describe('Database Delete Api', () => {
     expect(await deleteImpl.delete(1)).toEqual(users[0])
   })
 
+  it('Should delete with transaction', async function() {
+    sinon.stub(User, 'findOne')
+      .withArgs({ where: { id: 1 } })
+      .returns(users[0])
+
+    expect(await deleteImpl.delete(1, {})).toEqual(users[0])
+  })
+
   it('Should delete with error', async function() {
     //Arrange
     sinon.stub(User, 'findOne').throws('Error')

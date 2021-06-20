@@ -1,6 +1,7 @@
 import { writeFileSync } from 'fs'
-import { sequelize } from '../sequelize'
 import sequelizeErd from 'sequelize-erd'
+
+import { sequelize } from '../sequelize'
 
 async function main(): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-var-requires

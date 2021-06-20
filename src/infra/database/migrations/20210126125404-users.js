@@ -1,29 +1,17 @@
 'use strict'
 
 const { INTEGER, STRING, BOOLEAN, DOUBLE, JSON, DATE } = require('sequelize')
+const { id, officeId, createdAt, updatedAt, deletedAt, createrId, updaterId } = require('../utilities/default-fields')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const table = await queryInterface.createTable('users', {
-      id: {
-        type: INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true
-      },
+      id,
       username: {
         type: STRING,
         allowNull: false
       },
-      officeId: {
-        type: INTEGER,
-        allowNull: false,
-        references: {
-          model: "offices",
-          key: "id"
-        },
-        onDelete: 'CASCADE'
-      },
+      officeId,
       email: {
         type: STRING,
         allowNull: false
@@ -53,8 +41,7 @@ module.exports = {
         type: STRING
       },
       cpf: {
-        type: STRING,
-        allowNull: false
+        type: STRING
       },
       recoveryToken: {
         type: STRING
@@ -64,36 +51,33 @@ module.exports = {
       },
       roleId: {
         type: INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'roles',
+          key: 'id'
+        },
+        onDelete: 'NO ACTION'
       },
       createrId: {
-        type: INTEGER,
+        ...createrId,
         allowNull: true
       },
       updaterId: {
-        type: INTEGER,
+        ...updaterId,
         allowNull: true
       },
-      createdAt: {
-        type: DATE,
-        allowNull: true
-      },
-      updatedAt: {
-        type: DATE,
-        allowNull: true
-      },
-      deletedAt: {
-        type: DATE
-      }
+      createdAt,
+      updatedAt,
+      deletedAt
     }, {
       uniqueKeys: {
         unique_username: {
           customIndex: true,
-          fields: ["username"]
+          fields: ['username']
         },
         unique_email: {
           customIndex: true,
-          fields: ["email"]
+          fields: ['email']
         }
       }
     })

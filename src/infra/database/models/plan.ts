@@ -1,16 +1,14 @@
-import { sequelize } from '@/infra/database/sequelize'
-import { Model, INTEGER, STRING } from 'sequelize'
+import { Model, STRING } from 'sequelize'
 
-class PlanModel extends Model {}
+import { sequelize } from '@/infra/database/sequelize'
+
+import { idSchema } from '../utilities'
+
+class PlanModel extends Model { }
 
 PlanModel.init(
   {
-    id: {
-      type: INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
+    id: idSchema,
     name: {
       type: STRING,
       allowNull: false,

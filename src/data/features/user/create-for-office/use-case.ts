@@ -4,11 +4,12 @@ import {
   CreateUserRequestDTO,
   ReadUserResponseDTO,
 } from '@/domain/features'
-import { UserModelMapper } from '../mapper'
 import {
   CreateUserForOfficeRequestDTO,
   CreateUserForOfficeResponseDTO,
 } from '@/domain/features/'
+
+import { UserModelMapper } from '../mapper'
 
 interface Params {
   createUserUseCase: CreateCrudUseCase<

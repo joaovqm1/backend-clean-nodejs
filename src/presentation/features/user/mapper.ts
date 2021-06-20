@@ -1,15 +1,16 @@
-import { BaseCrudViewModelMapper } from '@/presentation/base-crud-view-model-mapper'
+import { StringUtilities } from '@/data'
 import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
-  ReadCrudRequestDTO,
+  Filter,
   ReadUserResponseDTO,
   UpdateUserRequestDTO,
   UpdateUserResponseDTO,
   UserEntity,
   userFieldsToInclude,
 } from '@/domain'
-import { fromAnyReadRequestToReadRequestDTO, StringUtilities } from '@/data'
+import { BaseCrudViewModelMapper } from '@/presentation/base-crud-view-model-mapper'
+import { transformRequestToFilters } from '@/presentation/request-to-filters'
 
 export interface CreateUserRequestViewModel extends CreateUserRequestDTO { }
 export interface CreateUserResponseViewModel extends CreateUserResponseDTO { }
@@ -43,7 +44,7 @@ export class UserViewModelMapper implements BaseCrudViewModelMapper {
     return {
       ...request,
       name: request.name.toUpperCase(),
-      cpf: this.stringUtilities.removeSpecialCharactersFromString(request.cpf.toUpperCase(),)
+      cpf: this.stringUtilities.removeSpecialCharactersFromString(request.cpf?.toUpperCase())
     }
   }
 
@@ -79,7 +80,15 @@ export class UserViewModelMapper implements BaseCrudViewModelMapper {
     return response.map(this.fromReadOneResponseDTOToReadResponseOneViewModel)
   }
 
-  fromReadRequestViewModelToReadRequestDTO(request: ReadUserRequestViewModel): ReadCrudRequestDTO {
-    return fromAnyReadRequestToReadRequestDTO({ request, fieldsToInclude: userFieldsToInclude })
+  fromReadRequestViewModelToFilters(request: ReadUserRequestViewModel): Filter[] {
+    return transformRequestToFilters({
+      request,
+      fieldsAndFilters: {
+        id: 'equalTo',
+        username: 'equalTo',
+        email: 'equalTo'
+      },
+      fieldsToInclude: userFieldsToInclude
+    })
   }
 }

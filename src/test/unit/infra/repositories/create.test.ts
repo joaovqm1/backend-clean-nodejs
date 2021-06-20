@@ -1,9 +1,11 @@
+import faker from 'faker'
+
 import {
   CreateCrudRepositoryImpl,
   CreateImpl,
   ErrorHandlerImpl
 } from '@/infra'
-import User from '@/infra/database/models/user'
+import { User } from '@/infra'
 
 import sinon from 'sinon'
 describe('Infra - Create Crud Repository', () => {
