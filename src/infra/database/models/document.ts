@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import { DOUBLE, INTEGER, Model, STRING } from 'sequelize'
+import { DOUBLE, Model, STRING } from 'sequelize'
 
 import { storageConfig } from '@/config/index'
 import { sequelize } from '@/infra/database/sequelize'
