@@ -7,7 +7,6 @@ export type HttpResponse<T = any> = {
 }
 
 export function serverError(error: Error): HttpResponse {
-  console.log(error)
   if (error instanceof AppError && error.isExpectedError) {
     return {
       statusCode: error.code || 500,

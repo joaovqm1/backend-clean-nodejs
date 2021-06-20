@@ -42,7 +42,6 @@ export class GenericController implements Controller {
 
       return ok(response)
     } catch (error) {
-      console.log(error)
       return serverError(error)
     }
   }

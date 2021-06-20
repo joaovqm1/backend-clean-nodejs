@@ -25,7 +25,6 @@ class S3AdapterImpl implements S3Adapter {
     return new Promise((resolve, reject) => {
       this.s3.upload(params, function(error: Error, data: any) {
         if (error) {
-          console.log(error)
           return reject(new Error('Não foi possível fazer o upload do arquivo'))
         } else {
           return resolve(data.Location)

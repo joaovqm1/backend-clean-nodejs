@@ -71,10 +71,7 @@ describe('Data - Create User Use Case', function() {
       .withArgs(model.id)
       .resolves(fetchedUser)
 
-    const sendWelcomeEmailSpy = sinon.stub(createUserUseCase, 'sendWelcomeEmail')
-
     expect(await createUserUseCase.create(request)).toEqual(fetchedUser)
-    expect(sendWelcomeEmailSpy.getCall(0).args[0]).toEqual(fetchedUser)
   })
 
   it('Should create model and set password hash', async function() {

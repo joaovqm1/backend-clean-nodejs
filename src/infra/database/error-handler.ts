@@ -1,6 +1,5 @@
 import { UniqueConstraintError, ValidationError } from 'sequelize'
 
-import { enviromentConfig } from '@/config'
 import { UniqueAttributeError } from '@/domain'
 
 import { DatabaseValidationError } from './api/errors'
@@ -12,10 +11,6 @@ export class ErrorHandlerImpl implements ErrorHandler {
   constructor(private readonly uniqueConstraintError?: string) { }
 
   handleSequelizeError(error: Error): Error {
-    if (enviromentConfig.isDevOrTestEnviroment()) {
-      console.log(error)
-    }
-
     if (error instanceof UniqueConstraintError) {
       throw new UniqueAttributeError(this.uniqueConstraintError)
     } else if (error instanceof ValidationError) {

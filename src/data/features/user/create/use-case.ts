@@ -41,11 +41,7 @@ export class CreateUserUseCaseImpl implements CreateCrudUseCase<CreateUserReques
 
     const createdUser = await this.repository.create(model)
 
-    const fetchedUser = await this.afterCreateUseCase.fetchAfterCreation(createdUser.id)
-
-    await this.sendWelcomeEmail(fetchedUser)
-
-    return fetchedUser
+    return this.afterCreateUseCase.fetchAfterCreation(createdUser.id)
   }
 
   async createModelAndSetPasswordHash(
