@@ -39,7 +39,6 @@ export class UpdateDocumentUseCaseImpl implements UpdateCrudUseCase<UploadDocume
       return this.updateCrudUseCase.update({
         id: request.id,
         description: request.description,
-        project: request.project,
         ...response
       })
     } else {

@@ -11,7 +11,6 @@ describe('Data - Finance Model Mapper', function() {
     customerSupplierId: mockFinanceEntity.customerSupplier.id,
     financeTypeId: mockFinanceEntity.financeType.id,
     financeMethodId: mockFinanceEntity.financeMethod.id,
-    projectId: mockFinanceEntity.project.id
   }
 
   describe('Create', function() {
@@ -21,7 +20,6 @@ describe('Data - Finance Model Mapper', function() {
       delete modelCopy.customerSupplier
       delete modelCopy.financeType
       delete modelCopy.financeMethod
-      delete modelCopy.project
 
       expect(modelMapper.fromCreateRequestDTOToModel(createRequestDTO)).toEqual(modelCopy)
     })
@@ -34,7 +32,6 @@ describe('Data - Finance Model Mapper', function() {
       delete modelCopy.customerSupplierId
       delete modelCopy.financeTypeId
       delete modelCopy.financeMethodId
-      delete modelCopy.projectId
 
       expect(modelMapper.fromModelToReadOneResponse(modelCopy)).toEqual(readResponse)
     })
@@ -53,13 +50,11 @@ describe('Data - Finance Model Mapper', function() {
   describe('Update', function() {
     it('Should transform update request dto to model', function() {
       const updateRequestDTO: UpdateFinanceRequestDTO = objectUtilities.cloneObject(mockFinanceEntity)
-      updateRequestDTO.project = { id: 1 }
 
       const modelCopy = objectUtilities.cloneObject(financeModel)
       delete modelCopy.customerSupplier
       delete modelCopy.financeType
       delete modelCopy.financeMethod
-      delete modelCopy.project
 
       expect(modelMapper.fromUpdateRequestDTOToModel(updateRequestDTO)).toStrictEqual(modelCopy)
     })

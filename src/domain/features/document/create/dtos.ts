@@ -5,7 +5,7 @@ export interface CreateDocumentRequestDTO extends
 }
 
 export interface UploadDocumentRequestDTO extends
-  Pick<DocumentEntity, 'description' | 'project' | 'projectScope' | 'projectPhase'> {
+  Pick<DocumentEntity, 'description'> {
   id?: number
   file: Omit<UploadFileRequestDTO, 'description'>
 }

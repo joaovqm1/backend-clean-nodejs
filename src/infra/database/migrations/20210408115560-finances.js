@@ -1,7 +1,7 @@
 'use strict'
 
 const { INTEGER, STRING, DOUBLE, DATEONLY, ENUM } = require('sequelize')
-const { id, defaultFields, projectId, customerSupplierId } = require('../utilities/default-fields')
+const { id, defaultFields, customerSupplierId } = require('../utilities/default-fields')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -49,7 +49,6 @@ module.exports = {
         },
         onDelete: 'NO ACTION'
       },
-      projectId,
       ...defaultFields
     })
 

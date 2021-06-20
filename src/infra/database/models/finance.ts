@@ -61,9 +61,6 @@ FinanceSequelizeModel.init({
   financeMethodId: {
     type: INTEGER,
   },
-  projectId: {
-    type: INTEGER
-  },
   ...defaultFieldsSchema,
 }, {
   sequelize,

@@ -4,12 +4,12 @@ import { Filter } from '@/domain'
 
 interface Params {
   request: any
-  fieldsAndFilters: { [field: string]: string }
+  fieldsAndFilters?: { [field: string]: string }
   fieldsToInclude?: string[]
 }
 
 export function transformRequestToFilters(params: Params): Filter[] {
-  const { request, fieldsAndFilters, fieldsToInclude } = params
+  const { request, fieldsAndFilters = {}, fieldsToInclude } = params
 
   fieldsAndFilters.id = 'equalTo'
 

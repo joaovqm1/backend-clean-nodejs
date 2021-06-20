@@ -13,24 +13,21 @@ export class TaskModelMapper implements BaseModelMapper {
     return this.fromCreateUpdateRequestDTOToModel(request)
   }
 
-  fromCreateUpdateRequestDTOToModel(request: CreateTaskRequestDTO | UpdateTaskRequestDTO): Omit<TaskModel, 'id' | 'responsible' | 'project'> {
+  fromCreateUpdateRequestDTOToModel(request: CreateTaskRequestDTO | UpdateTaskRequestDTO): Omit<TaskModel, 'id' | 'responsible'> {
     const responsibleId = this.getResponsibleId(request.responsible?.id, this.currentUserId)
-    const projectId = request.project?.id
 
     delete request.responsible
-    delete request.project
 
     return {
       ...request,
       responsibleId,
-      projectId,
       title: request.title.toUpperCase(),
       description: request.description?.toUpperCase()
     }
   }
 
-  fromUpdateRequestDTOToModel(request: UpdateTaskRequestDTO): Omit<TaskModel, 'responsible' | 'project'> {
-    return this.fromCreateUpdateRequestDTOToModel(request) as Omit<TaskModel, 'responsible' | 'project'>
+  fromUpdateRequestDTOToModel(request: UpdateTaskRequestDTO): Omit<TaskModel, 'responsible'> {
+    return this.fromCreateUpdateRequestDTOToModel(request) as Omit<TaskModel, 'responsible'>
   }
 
   getResponsibleId(requestResponsibleId: number, currentUserId: number): number {

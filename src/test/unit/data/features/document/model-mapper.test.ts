@@ -7,10 +7,6 @@ describe('Data - Document Model Mapper', function() {
 
   const documentModel: DocumentEntity = {
     ...mockDocumentEntity
-    // projectId: documentEntity.project.id,
-    // projectScopeId: documentEntity.projectScope.id,
-    // projectPhaseId: documentEntity.projectPhase.id
-
   }
 
   describe('Create', function() {

@@ -103,15 +103,6 @@ module.exports = {
     officeId
   },
   officeId,
-  projectId: {
-    type: INTEGER,
-    allowNull: true,
-    references: {
-      model: 'projects',
-      key: 'id'
-    },
-    onDelete: 'CASCADE'
-  },
   customerSupplierId: {
     type: INTEGER,
     allowNull: false,

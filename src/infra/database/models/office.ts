@@ -9,12 +9,7 @@ import { Document } from './document'
 import { Finance } from './finance'
 import { FinanceMethod } from './financemethod'
 import { FinanceType } from './financetype'
-import { Phases } from './phases'
 import { Plan } from './plan'
-import { Project } from './project'
-import { ProjectStatus } from './projectstatus'
-import { ProjectType } from './projecttype'
-import { Scope } from './scope'
 import { State } from './state'
 import { Task } from './task'
 import { User } from './user'
@@ -108,12 +103,7 @@ OfficeSequelizeModel.hasMany(CustomerSupplier, getForeignKeyOptions('CASCADE'))
 OfficeSequelizeModel.hasMany(Finance, getForeignKeyOptions('CASCADE'))
 OfficeSequelizeModel.hasMany(FinanceMethod, getForeignKeyOptions('CASCADE'))
 OfficeSequelizeModel.hasMany(FinanceType, getForeignKeyOptions('CASCADE'))
-OfficeSequelizeModel.hasMany(Phases, getForeignKeyOptions('CASCADE'))
-OfficeSequelizeModel.hasMany(Scope, getForeignKeyOptions('CASCADE'))
-OfficeSequelizeModel.hasMany(ProjectStatus, getForeignKeyOptions('CASCADE'))
-OfficeSequelizeModel.hasMany(ProjectType, getForeignKeyOptions('CASCADE'))
 OfficeSequelizeModel.hasMany(Task, getForeignKeyOptions('CASCADE'))
-OfficeSequelizeModel.hasMany(Project, getForeignKeyOptions('CASCADE'))
 
 
 export const Office = OfficeSequelizeModel

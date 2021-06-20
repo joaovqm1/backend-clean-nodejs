@@ -14,7 +14,6 @@ export interface CreateTaskRequestViewModel extends CreateTaskRequestDTO { }
 export interface CreateTaskResponseViewModel extends ReadTaskResponseDTO { }
 export interface ReadTaskRequestViewModel {
   id?: number
-  projectId?: number
 }
 
 export interface ReadTaskResponseViewModel extends ReadTaskResponseDTO { }
@@ -51,9 +50,6 @@ export class TaskViewModelMapper implements BaseCrudViewModelMapper {
   fromReadRequestViewModelToFilters(request: ReadTaskRequestViewModel): Filter[] {
     return transformRequestToFilters({
       request,
-      fieldsAndFilters: {
-        projectId: 'equalTo'
-      },
       fieldsToInclude: tasksFieldsToInclude
     })
   }

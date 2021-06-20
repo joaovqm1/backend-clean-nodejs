@@ -37,7 +37,6 @@ describe('Update document use case', function() {
     sinon.stub(mockUpdateCrudUseCase, 'update').withArgs({
       id: mockNewDocumentEntity.id,
       description: mockNewDocumentEntity.description,
-      project: mockNewDocumentEntity.project,
       ...mockUploadFileResposeDTO
     }).resolves(mockNewDocumentEntity)
 

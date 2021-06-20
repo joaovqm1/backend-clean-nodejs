@@ -7,7 +7,6 @@ import {
   createCustomerSupplierApi,
   createFinanceApi,
   createOfficesApi,
-  createProjectApi,
   createTaskApi,
   createUsersApi
 } from './features'
@@ -32,7 +31,6 @@ openApi.setLicense(
 openApi = createCustomerSupplierApi(openApi)
 openApi = createFinanceApi(openApi)
 openApi = createOfficesApi(openApi)
-openApi = createProjectApi(openApi)
 openApi = createTaskApi(openApi)
 openApi = createUsersApi(openApi)
 

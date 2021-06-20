@@ -30,7 +30,6 @@ describe('Create document use case', function() {
 
     sinon.stub(mockCreateCrudUseCase, 'create').withArgs({
       description: mockDocumentEntity.description,
-      project: mockDocumentEntity.project,
       ...mockUploadFileResposeDTO
     }).resolves(mockDocumentEntity)
 

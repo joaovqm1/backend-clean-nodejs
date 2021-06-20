@@ -9,9 +9,6 @@ export interface TaskEntity extends BaseEntity {
   startTime?: string
   finishTime?: string
   responsible: Responsible
-  project?: {
-    id: number
-  }
 }
 
 export enum TaskStatus {

@@ -44,15 +44,6 @@ DocumentModel.init(
     size: {
       type: DOUBLE,
     },
-    projectId: {
-      type: INTEGER,
-    },
-    projectScopeId: {
-      type: INTEGER,
-    },
-    projectPhaseId: {
-      type: INTEGER,
-    },
     ...defaultFieldsSchema,
   },
   {

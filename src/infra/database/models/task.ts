@@ -43,9 +43,6 @@ TaskSequelizeModel.init({
     type: INTEGER,
     allowNull: false
   },
-  projectId: {
-    type: INTEGER
-  },
   ...defaultFieldsSchema
 }, {
   sequelize,

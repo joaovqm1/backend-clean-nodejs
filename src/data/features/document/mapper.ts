@@ -15,20 +15,9 @@ export class DocumentModelMapper implements BaseModelMapper {
   }
 
   fromCreateUpdateRequestDTOToModel(request: any): any {
-    const projectId = request.project?.id
-    delete request.project
-    // const projectScopeId = request.projectScope?.id
-    // delete request.projectScope
-    // const projectPhaseId = request.projectPhase?.id
-    // delete request.projectPhase
-
     return {
       ...request,
-      // projectId,
-      // projectScopeId,
-      // projectPhaseId,
-      description: request.description.toUpperCase(),
-      projectId
+      description: request.description.toUpperCase()
     }
   }
 

@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { DocumentModel, ProjectModel } from '@/data'
+import { DocumentModel } from '@/data'
 import { Roles } from '@/data/features/user/roles'
 import {
   OfficeEntity,
@@ -11,10 +11,6 @@ import {
   CityEntity,
   StateEntity,
   FinanceMethodEntity,
-  PhasesEntity,
-  ScopeEntity,
-  ProjectStatusEntity,
-  ProjectTypeEntity,
   FinanceTypeEntity,
   FinanceTypeEnum,
   TaskEntity,
@@ -23,10 +19,7 @@ import {
   FinanceEntity,
   FinanceType,
   FinanceStatus,
-  TaskStatus,
-  ProjectScopeEntity,
-  ProjectPhaseEntity,
-  ProjectEntity
+  TaskStatus
 } from '@/domain'
 import { dateUtilities } from '@/main'
 
@@ -82,15 +75,6 @@ export const mockDocumentEntity: DocumentEntity = {
   extension: 'pdf',
   mimeType: 'pdf',
   size: 10
-  // project: {
-  //   id: 1
-  // },
-  // projectScope: {
-  //   id: 1
-  // },
-  // projectPhase: {
-  //   id: 1
-  // },
 }
 
 export const mockDocumentModel: DocumentModel = mockDocumentEntity
@@ -186,27 +170,6 @@ export const mockFinanceMethodEntity: FinanceMethodEntity = {
   description: 'DESCRIÇÃO DO MÉTODO FINANCEIRO'
 }
 
-export const mockPhaseEntity: PhasesEntity = {
-  id: 1,
-  description: 'DESCRIÇÃO DOS PASSOS'
-}
-
-
-export const mockScopeEntity: ScopeEntity = {
-  id: faker.datatype.number(),
-  description: 'DESCRIÇÃO DO ESCOPO'
-}
-
-export const mockProjectStatusEntity: ProjectStatusEntity = {
-  id: 1,
-  description: 'DESCRIÇÃO DO STATUS DO PROJETO'
-}
-
-export const mockProjectTypeEntity: ProjectTypeEntity = {
-  id: 1,
-  description: 'DESCRIÇÃO DO TIPO DO PROJETO'
-}
-
 const randomFinanceType = FinanceTypeEnum[
   faker.helpers.replaceSymbolWithNumber(
     faker.random.arrayElement(Object.getOwnPropertyNames(FinanceTypeEnum))
@@ -270,109 +233,5 @@ export const mockFinanceEntity: FinanceEntity = {
   financeMethod: {
     id: 1,
     description: faker.random.word()
-  },
-  project: {
-    id: 1
   }
-}
-
-export const mockProjectScopeEntity: ProjectScopeEntity = {
-  id: faker.datatype.number(),
-  project: {
-    id: faker.datatype.number(),
-    name: faker.random.word()
-  },
-  scope: {
-    id: faker.datatype.number(),
-    description: faker.random.word()
-  }
-}
-
-export const mockProjectPhaseEntity: ProjectPhaseEntity = {
-  id: faker.datatype.number(),
-  project: {
-    id: faker.datatype.number(),
-    name: faker.random.word()
-  },
-  phase: {
-    id: faker.datatype.number(),
-    description: faker.random.word()
-  },
-  startDate: faker.date.past().toISOString().split('T')[0]
-}
-
-const mockProjectId = faker.datatype.number()
-const mockProjectName = faker.random.word().toUpperCase()
-
-export const mockProjectPaymentEntry: FinanceEntity = {
-  id: faker.datatype.number(),
-  project: { id: mockProjectId },
-  customerSupplier: mockCustomerSupplierEntity,
-  description: `Entrada de valor do projeto - obra: ${mockProjectName}`.toUpperCase(),
-  status: FinanceStatus.FINISHED,
-  type: FinanceType.INCOME,
-  finishDate: faker.date.recent().toISOString(),
-  financeType: { id: 1, description: 'RECEITA DE PROJETO' },
-  value: faker.datatype.number()
-}
-
-export const mockProjectFinance: FinanceEntity = {
-  id: faker.datatype.number(),
-  project: { id: mockProjectId },
-  customerSupplier: mockCustomerSupplierEntity,
-  description: `Parcela de valor do projeto - obra: ${mockProjectName}`.toUpperCase(),
-  status: FinanceStatus.OPENED,
-  type: FinanceType.INCOME,
-  dateToFinish: faker.date.recent().toISOString(),
-  financeType: { id: 1, description: 'RECEITA DE PROJETO' },
-  value: faker.datatype.number()
-}
-
-export const mockProjectEntity: ProjectEntity = {
-  id: mockProjectId,
-  customer: mockCustomerSupplierEntity,
-  name: mockProjectName,
-  projectPhases: [mockProjectPhaseEntity, { ...mockProjectPhaseEntity, id: mockProjectPhaseEntity.id + 1 }],
-  projectScopes: [mockProjectScopeEntity, { ...mockProjectScopeEntity, id: mockProjectScopeEntity.id + 1 }],
-  projectStatus: mockProjectStatusEntity,
-  projectType: mockProjectTypeEntity,
-  technicalManager: mockUserEntity,
-  startDate: faker.date.past().toISOString(),
-  dueDate: faker.date.future().toISOString(),
-  finishDate: faker.date.future().toISOString(),
-  address: faker.address.streetName().toUpperCase(),
-  postcode: '35400000',
-  addressComplement: faker.random.word().toUpperCase(),
-  addressReference: faker.random.word().toUpperCase(),
-  state: {
-    id: 1,
-    name: 'MINAS GERAIS'
-  },
-  city: {
-    id: 1,
-    name: 'OURO PRETO'
-  },
-  neighborhood: faker.random.word().toUpperCase(),
-  addressNumber: faker.datatype.number().toString().toUpperCase(),
-  finances: [mockProjectPaymentEntry, mockProjectFinance],
-  annotation: faker.random.word().toUpperCase(),
-  totalArea: faker.datatype.number(),
-  payment: {
-    value: mockProjectPaymentEntry.value + mockProjectFinance.value,
-    entry: mockProjectPaymentEntry.value,
-    interval: 1,
-    numberOfFinances: 2,
-    financesValue: mockProjectFinance.value,
-    firstFinanceDate: mockProjectFinance.dateToFinish
-  }
-}
-
-export const mockProjectModel: ProjectModel = {
-  ...mockProjectEntity,
-  customerId: mockProjectEntity.customer.id,
-  projectStatusId: mockProjectEntity.projectStatus.id,
-  projectTypeId: mockProjectEntity.projectType.id,
-  technicalManagerId: mockProjectEntity.technicalManager.id,
-  cityId: mockProjectEntity.city.id,
-  stateId: mockProjectEntity.state.id
 }

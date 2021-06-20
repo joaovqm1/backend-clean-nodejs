@@ -27,7 +27,6 @@ export interface CreateFinanceResponseViewModel extends Omit<ReadFinanceResponse
 }
 export interface ReadFinanceRequestViewModel {
   id?: number
-  projectId?: number
 }
 export interface ReadFinanceResponseViewModel extends Omit<ReadFinanceResponseDTO, 'status'> {
   status: FinanceStatusViewModel
@@ -105,9 +104,6 @@ export class FinanceViewModelMapper implements BaseCrudViewModelMapper {
   fromReadRequestViewModelToFilters(request: ReadFinanceRequestViewModel): Filter[] {
     return transformRequestToFilters({
       request,
-      fieldsAndFilters: {
-        projectId: 'equalTo'
-      },
       fieldsToInclude: financeFieldsToInclude
     })
   }

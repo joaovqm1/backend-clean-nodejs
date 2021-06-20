@@ -15,9 +15,6 @@ export interface FinanceEntity extends BaseEntity {
   value: number
   financeType: Pick<FinanceTypeEntity, 'id' | 'description'>
   financeMethod?: Pick<FinanceMethodEntity, 'id' | 'description'>
-  project?: {
-    id: number
-  }
 }
 interface CustomerSupplier {
   id: number

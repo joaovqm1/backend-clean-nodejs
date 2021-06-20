@@ -26,7 +26,6 @@ export class CreateDocumentUseCaseImpl implements CreateCrudUseCase<UploadDocume
 
     return this.createCrudUseCase.create({
       description: request.description,
-      project: request.project,
       ...response
     })
   }

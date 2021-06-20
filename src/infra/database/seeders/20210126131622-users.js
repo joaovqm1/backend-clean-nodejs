@@ -1,6 +1,5 @@
 'use strict'
 
-const { UniqueConstraintError } = require('sequelize')
 const bcrypt = require('bcryptjs')
 
 module.exports = {
@@ -9,12 +8,12 @@ module.exports = {
       [{
         id: 1,
         roleId: 1,
-        username: 'projetei',
+        username: 'clean-arch',
         cpf: '11111111111',
         email: 'maintest@test.com',
         officeId: 1,
         name: 'OFFICE OWNER',
-        passwordHash: await bcrypt.hash('projetei', 8),
+        passwordHash: await bcrypt.hash('clean-arch', 8),
         createdAt: new Date(),
         updatedAt: new Date()
       }], {})

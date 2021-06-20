@@ -13,13 +13,6 @@ import {
   FinanceMethodFactory,
   FinanceTypeFactory,
   OfficeFactory,
-  PhasesFactory,
-  ProjectFactory,
-  ProjectPhaseFactory,
-  ProjectScopeFactory,
-  ProjectStatusFactory,
-  ProjectTypeFactory,
-  ScopeFactory,
   StateFactory,
   TaskFactory,
   UserFactory
@@ -71,30 +64,6 @@ export class ControllerFactory {
         const controllerFactory = new FinanceMethodFactory(requestParams)
         return controllerFactory.getControllerFacade()
       }
-      case 'PHASES': {
-        const controllerFactory = new PhasesFactory(requestParams)
-        return controllerFactory.getControllerFacade()
-      }
-      case 'SCOPES': {
-        const controllerFactory = new ScopeFactory(requestParams)
-        return controllerFactory.getControllerFacade()
-      }
-      case 'PROJECTSSTATUS': {
-        const controllerFactory = new ProjectStatusFactory(requestParams)
-        return controllerFactory.getControllerFacade()
-      }
-      case 'PROJECTSPHASES': {
-        const phaseFactory = new PhasesFactory(requestParams)
-        const controllerFactory = new ProjectPhaseFactory({
-          requestParams,
-          readPhasesUseCase: phaseFactory.getReadCrudUseCase()
-        })
-        return controllerFactory.getControllerFacade()
-      }
-      case 'PROJECTTYPES': {
-        const controllerFactory = new ProjectTypeFactory(requestParams)
-        return controllerFactory.getControllerFacade()
-      }
       case 'FINANCETYPES': {
         const controllerFactory = new FinanceTypeFactory(requestParams)
         return controllerFactory.getControllerFacade()
@@ -111,28 +80,6 @@ export class ControllerFactory {
       case 'EXPENSES': {
         const controllerFactory = new FinanceFactory(requestParams)
         return controllerFactory.getControllerFacade()
-      }
-      case 'PROJECTS': {
-        const financeFactory = new FinanceFactory(requestParams)
-        const scopeFactory = new ScopeFactory(requestParams)
-        const phaseFactory = new PhasesFactory(requestParams)
-        const projectScopeFactory = new ProjectScopeFactory({
-          requestParams,
-          readScopesUseCase: scopeFactory.getReadCrudUseCase()
-        })
-        const projectPhaseFactory = new ProjectPhaseFactory({
-          requestParams,
-          readPhasesUseCase: phaseFactory.getReadCrudUseCase()
-        })
-        const projectFactory = new ProjectFactory({
-          requestParams,
-          createFinancesForProjectUseCase: financeFactory.getCreateFinanceForProjectUseCase(),
-          updateFinancesForProjectUseCase: financeFactory.getUpdateFinanceForProjectUseCase(),
-          createProjectPhasesForProjectUseCase: projectPhaseFactory.getCreateProjectPhasesForProject(),
-          createProjectScopesForProjectUseCase: projectScopeFactory.getCreateProjectScopesForProject(),
-          updateProjectScopesForProjectUseCase: projectScopeFactory.getUpdateProjectScopesForProject()
-        })
-        return projectFactory.getControllerFacade()
       }
       default:
         throw new EntityNotFoundError(`Não foi possível encontrar a entidade ${requestParams.feature}`)

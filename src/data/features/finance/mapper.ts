@@ -16,19 +16,16 @@ export class FinanceModelMapper implements BaseModelMapper {
     const financeTypeId = request.financeType?.id
     const financeMethodId = request.financeMethod?.id
     const customerSupplierId = request.customerSupplier.id
-    const projectId = request.project?.id
 
     delete request.customerSupplier
     delete request.financeMethod
     delete request.financeType
-    delete request.project
 
     return {
       ...request,
       customerSupplierId,
       financeMethodId,
       financeTypeId,
-      projectId,
       description: request.description.toUpperCase(),
     }
   }
@@ -41,7 +38,6 @@ export class FinanceModelMapper implements BaseModelMapper {
     delete model.customerSupplierId
     delete model.financeMethodId
     delete model.financeTypeId
-    delete model.projectId
     return {
       ...model
     }

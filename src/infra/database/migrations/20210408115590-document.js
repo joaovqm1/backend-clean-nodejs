@@ -1,7 +1,7 @@
 'use strict'
 
-const { INTEGER, STRING, DOUBLE } = require('sequelize')
-const { id, defaultFields, projectId } = require('../utilities/default-fields')
+const { STRING, DOUBLE } = require('sequelize')
+const { id, defaultFields } = require('../utilities/default-fields')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -32,23 +32,6 @@ module.exports = {
       },
       size: {
         type: DOUBLE,
-      },
-      projectId,
-      projectScopeId: {
-        type: INTEGER,
-        references: {
-          model: 'projectsscopes',
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
-      },
-      projectPhaseId: {
-        type: INTEGER,
-        references: {
-          model: 'projectsphases',
-          key: 'id'
-        },
-        onDelete: 'CASCADE'
       },
       ...defaultFields
     }, {

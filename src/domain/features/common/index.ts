@@ -1,1 +1,4 @@
-export * from './project-payment'
+export enum FinanceStatus {
+  OPENED = 'ABERTA',
+  FINISHED = 'FINALIZADA'
+}

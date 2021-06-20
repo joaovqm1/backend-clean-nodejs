@@ -1,23 +1,18 @@
 import {
-  CreateFinancesForProjectUseCaseImpl,
   FilterBuilder,
-  FinanceModelMapper,
-  UpdateFinancesForProjectUseCaseImpl,
+  FinanceModelMapper
 } from '@/data'
 import {
   CreateFinanceRequestDTO,
-  CreateFinancesForProjectUseCase,
   Filter,
   financeFieldsToInclude,
   FinanceType,
   ReadFinanceResponseDTO,
-  UpdateFinanceRequestDTO,
-  UpdateFinancesForProjectUseCase,
+  UpdateFinanceRequestDTO
 } from '@/domain'
 import { FinanceViewModelMapper } from '@/presentation'
 
 import { RequestParamsWithUser } from '../request-params'
-import { dateUtilities } from '../utilities'
 import { CrudFactory } from './crud'
 
 export class FinanceFactory {
@@ -53,21 +48,4 @@ export class FinanceFactory {
   getControllerFacade(): any {
     return this.financeCrudFactory.getControllerFacade()
   }
-
-  getCreateFinanceForProjectUseCase(): CreateFinancesForProjectUseCase {
-    return new CreateFinancesForProjectUseCaseImpl({
-      createFinanceUseCase: this.financeCrudFactory.getCreateUseCase(),
-      dateUtilities
-    })
-  }
-
-  getUpdateFinanceForProjectUseCase(): UpdateFinancesForProjectUseCase {
-    return new UpdateFinancesForProjectUseCaseImpl({
-      createFinanceForProjectUseCase: this.getCreateFinanceForProjectUseCase(),
-      deleteFinanceUseCase: this.financeCrudFactory.getDeleteUseCase(),
-      readFinanceUseCase: this.financeCrudFactory.getReadUseCase(),
-      dateUtilities
-    })
-  }
-
 }

@@ -15,7 +15,6 @@ export interface CreateDocumentResponseViewModel extends ReadDocumentResponseDTO
 
 export interface ReadDocumentRequestViewModel {
   id?: number
-  projectId?: number
 }
 export interface ReadDocumentResponseViewModel extends ReadDocumentResponseDTO { }
 
@@ -57,10 +56,7 @@ export class DocumentViewModelMapper implements BaseCrudViewModelMapper {
 
   fromReadRequestViewModelToFilters(request: ReadDocumentRequestViewModel): Filter[] {
     return transformRequestToFilters({
-      request,
-      fieldsAndFilters: {
-        projectId: 'equalTo'
-      }
+      request
     })
   }
 
